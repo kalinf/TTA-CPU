@@ -1,0 +1,6 @@
+amaranth[builtin-yosys]
+transactron==0.4.0
+pyright==1.1.393
+pytest==8.0.0
+flake8==7.0.0
+black==24.4.2

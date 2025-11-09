@@ -1,0 +1,22 @@
+{
+  "name": "ExampleTTA",
+  "i_really_like_powers_of_2": true,
+  "word_size": 16,
+  "minimal_constant_size" : 7,
+  "functional_units": [
+    {
+      "name": "Adder",
+      "inputs": 2,
+      "outputs": 1,
+      "trigger_position": 1,
+      "description": "Adds the operands"
+    },
+    {
+      "name": "Result",
+      "inputs": 1,
+      "outputs": 0,
+      "trigger_position": 0,
+      "description": "Result register for debug purpose"
+    }
+  ]
+}
