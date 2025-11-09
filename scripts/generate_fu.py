@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 import sys
-import os
 import json
 from pathlib import Path
 
 TEMPLATE = """from amaranth import *
-from {path_to_core}.FU import FU
-from {path_to_core}.bus import Bus
+from core.FU import FU
+from core.bus import Bus
+from core.registry import register_fu
 
 class {FUname}(FU):        
     def __init__(self, instr_bus : Bus, data_bus : Bus, input_count : int, output_count : int, address : int, trigger_pos : int):
@@ -21,30 +21,16 @@ class {FUname}(FU):
             ...
 
         return m
+
+register_fu("{FUname}", {FUname})
 """
-
-
-def python_import_relative_path(from_dir: Path, to_dir: Path) -> str:
-    """
-    Returns python relative import path from `from_dir` to `to_dir` (for example `....core`).
-    """
-    rel = os.path.relpath(to_dir, from_dir)
-    parts = Path(rel).parts
-    # this is legal, because relpath returns the shortest path
-    prefix = "." * sum(1 for p in parts if p == "..")
-    suffix = ".".join(p for p in parts if p not in ("..", "."))
-    return prefix + (("." + suffix) if prefix and suffix else suffix or ".")
 
 
 def generate_fu(target_dir: Path, fu_name: str):
     fu_file = target_dir / f"{fu_name}.py"
     if fu_file.exists():
-        # tu chcę tylko zmienić relatywną ścieżkę do katalogu projektu
-        ...
-    relative_path_to_core = python_import_relative_path(target_dir, Path(__file__).resolve().parent.parent / "core")
-
-    content = TEMPLATE.format(path_to_core=relative_path_to_core, FUname=fu_name)
-
+        return
+    content = TEMPLATE.format(FUname=fu_name)
     fu_file.write_text(content)
 
 
@@ -82,6 +68,7 @@ def main():
     config_detail_path = target_dir / "config_detail.json"
     with config_detail_path.open(mode="w", encoding="utf-8") as f:
         json.dump(configuration, f, ensure_ascii=False)
+
 
 if __name__ == "__main__":
     main()

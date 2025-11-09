@@ -1,7 +1,7 @@
 from amaranth import *
 from typing import final
-from layouts import DataLayout
-from bus import Bus
+from .layouts import DataLayout
+from .bus import Bus
 
 __all__ = ["FU"]
 
