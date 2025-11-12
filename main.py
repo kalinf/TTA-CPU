@@ -4,8 +4,10 @@ import importlib.util
 from amaranth import *
 from pathlib import Path
 from typing import final
+from functools import partial
 from core.registry import FU_REGISTRY
 from core.core import TTA_Core
+from testing.fibbonacci import run_sim_fib
 
 
 @final
@@ -34,20 +36,19 @@ def main():
     with config_path.open() as f:
         configuration = json.load(f)
 
-    fu_lambdas = []
+    fu_partial = []
     for f_unit in configuration["functional_units"]:
         name = f_unit["name"]
         if name in FU_REGISTRY:
-            fu_lambdas += [
+            fu_partial += [
                 (
                     name,
-                    lambda instr_bus, data_bus: FU_REGISTRY[name](
-                        instr_bus=instr_bus,
-                        data_bus=data_bus,
+                    partial(
+                        FU_REGISTRY[name],
                         input_count=f_unit["inputs"],
                         output_count=f_unit["outputs"],
                         address=f_unit["address"],
-                        trigger_pos=f_unit["trigger_position"],
+                        trigger_pos=f_unit["trigger_positions"],
                     ),
                 )
             ]
@@ -58,8 +59,10 @@ def main():
         src_addr_width=configuration["src_addr_width"],
         dest_addr_width=configuration["dest_addr_width"],
         data_width=configuration["word_size"],
-        FUs=fu_lambdas,
+        FUs=fu_partial,
     )
+
+    run_sim_fib(core)
 
 
 if __name__ == "__main__":

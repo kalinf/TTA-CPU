@@ -20,7 +20,7 @@ class Result(FU):
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
-        with m.If(self.instr_bus.data.dst_addr == self.trigger_addr):
+        with m.If(self.instr_bus.data.dst_addr == 3):
             # place for your code
             # m.d.falling += ...
             ...

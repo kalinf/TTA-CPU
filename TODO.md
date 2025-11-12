@@ -8,8 +8,10 @@
     - ~~zainstancjonowanie layoutów i magistral~~
     - ~~zaimportowanie konstruktorów jednostek funkcyjnych i ich instancjonowanie~~
 - test wyliczanie n-tej liczby fibbonacciego
+    - pierwszy działający test
     - ogarnięcie pytest
     - tłumaczenie czytelnych transportów (Adder.i0 -> Result.trigger) na "assembler"
+- porządne komentarze
 - pamięć programu
 - logical operations unit
 - jump branch unit

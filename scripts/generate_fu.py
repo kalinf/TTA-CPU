@@ -2,8 +2,9 @@
 import sys
 import json
 from pathlib import Path
+from typing import Iterable
 
-TEMPLATE = """from amaranth import *
+TEMPLATE_PREFIX = """from amaranth import *
 from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
@@ -14,23 +15,28 @@ class {FUname}(FU):
     
     def elaborate(self, platform):
         m = super().elaborate(platform)
-                
-        with m.If(self.instr_bus.data.dst_addr == self.trigger_addr):
+"""
+TEMPLATE_LOGIC = """
+        with m.If(self.instr_bus.data.dst_addr == {trigger_addr}):
             # place for your code
             # m.d.falling += ...
             ...
-
+"""
+TEMPLATE_SUFFIX = """
         return m
 
 register_fu("{FUname}", {FUname})
 """
 
 
-def generate_fu(target_dir: Path, fu_name: str):
+def generate_fu(target_dir: Path, fu_name: str, trigger_addrs: Iterable[int]):
     fu_file = target_dir / f"{fu_name}.py"
     if fu_file.exists():
         return
-    content = TEMPLATE.format(FUname=fu_name)
+    content = TEMPLATE_PREFIX.format(FUname=fu_name)
+    for trigger_addr in trigger_addrs:
+        content += TEMPLATE_LOGIC.format(trigger_addr=trigger_addr)
+    content += TEMPLATE_SUFFIX.format(FUname=fu_name)
     fu_file.write_text(content)
 
 
@@ -53,7 +59,7 @@ def main():
         f_unit["address"] = input_count + output_count
         input_count += f_unit["inputs"]
         output_count += f_unit["outputs"]
-        generate_fu(fu_dir, f_unit["name"])
+        generate_fu(fu_dir, f_unit["name"], [trig_pos + f_unit["address"] for trig_pos in f_unit["trigger_positions"]])
     configuration["src_addr_width"] = src_addr_width = max(
         output_count.bit_length(), min(configuration["minimal_constant_size"], configuration["word_size"])
     )
@@ -64,6 +70,7 @@ def main():
         else 0
     )
     configuration.pop("i_really_like_powers_of_2")
+    configuration.pop("minimal_constant_size")
 
     config_detail_path = target_dir / "config_detail.json"
     with config_detail_path.open(mode="w", encoding="utf-8") as f:

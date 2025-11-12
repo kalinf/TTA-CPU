@@ -1,13 +1,15 @@
 {
     "name": "ExampleTTA",
     "word_size": 16,
-    "minimal_constant_size": 7,
     "functional_units": [
         {
             "name": "Adder",
             "inputs": 2,
             "outputs": 1,
-            "trigger_position": 1,
+            "trigger_positions": [
+                0,
+                1
+            ],
             "description": "Adds the operands",
             "address": 0
         },
@@ -15,7 +17,9 @@
             "name": "Result",
             "inputs": 1,
             "outputs": 0,
-            "trigger_position": 0,
+            "trigger_positions": [
+                0
+            ],
             "description": "Result register for debug purpose",
             "address": 3
         }

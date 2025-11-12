@@ -16,14 +16,24 @@ class Adder(FU):
             address=address,
             trigger_pos=trigger_pos,
         )
+        self.dest_addr_0 = Signal(name="dest_addr_0")
+        self.dest_addr_1 = Signal(name="dest_addr_1")
 
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
-        with m.If(self.instr_bus.data.dst_addr == self.trigger_addr):
+        m.d.comb += [
+            self.dest_addr_0.eq(self.instr_bus.data.dst_addr == 0),
+            self.dest_addr_1.eq(self.instr_bus.data.dst_addr == 1),
+        ]
+
+        with m.If(self.dest_addr_0):
             # place for your code
-            # m.d.falling += ...
-            ...
+            m.d.falling += self.regs[2]["data"].eq(self.data_bus.data.data + self.regs[1]["data"])
+
+        with m.If(self.dest_addr_1):
+            # place for your code
+            m.d.falling += self.regs[2]["data"].eq(self.data_bus.data.data + self.regs[0]["data"])
 
         return m
 
