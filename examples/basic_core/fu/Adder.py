@@ -29,11 +29,17 @@ class Adder(FU):
 
         with m.If(self.dest_addr_0):
             # place for your code
-            m.d.falling += self.regs[2]["data"].eq(self.data_bus.data.data + self.regs[1]["data"])
+            m.d.falling += self.regs[2]["data"].eq(
+                Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
+                + self.regs[1]["data"]
+            )
 
         with m.If(self.dest_addr_1):
             # place for your code
-            m.d.falling += self.regs[2]["data"].eq(self.data_bus.data.data + self.regs[0]["data"])
+            m.d.falling += self.regs[2]["data"].eq(
+                Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
+                + self.regs[0]["data"]
+            )
 
         return m
 

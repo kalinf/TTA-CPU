@@ -1,13 +1,11 @@
-import sys
 import json
 import importlib.util
 from amaranth import *
 from pathlib import Path
 from typing import final
 from functools import partial
-from core.registry import FU_REGISTRY
-from core.core import TTA_Core
-from testing.fibbonacci import run_sim_fib
+from .registry import FU_REGISTRY
+from .core import TTA_Core
 
 
 @final
@@ -22,12 +20,8 @@ def load_all_fu_classes(fu_dir: Path):
         spec.loader.exec_module(module)
 
 
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python3 main.py <directory>")
-        sys.exit(1)
-
-    target_dir = Path(sys.argv[1]).resolve()
+def gen_core(directory: Path):
+    target_dir = directory.resolve()
     fu_dir = target_dir / "fu"
     config_path = target_dir / "config_detail.json"
 
@@ -61,9 +55,4 @@ def main():
         data_width=configuration["word_size"],
         FUs=fu_partial,
     )
-
-    run_sim_fib(core)
-
-
-if __name__ == "__main__":
-    main()
+    return core
