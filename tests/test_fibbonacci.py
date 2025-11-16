@@ -1,9 +1,6 @@
 import pytest
 from amaranth import *
 from amaranth.sim import Simulator
-from functools import partial
-
-# test na konfiguracji gdzie jest Adder o adresach 0, 1, 2 i triggerach na 0, 1
 
 
 def fibbonacci(n):
@@ -27,17 +24,20 @@ def fib(n):
 
 async def sim_fib(ctx, dut, n):
     await ctx.tick(domain="falling")
-    ctx.set(dut.instr_bus.data, {"constant": 1, "src_addr": 0, "dst_addr": 0})
+    ctx.set(dut.instr_bus.data, {"constant": 1, "src_addr": 0, "dst_addr": dut.Adder.inputs[0]["addr"]})
     await ctx.tick(domain="falling")
     if n == 0:
-        return ctx.get(dut.Adder.regs[2]["data"])
-    ctx.set(dut.instr_bus.data, {"constant": 1, "src_addr": 1, "dst_addr": 1})
+        return ctx.get(dut.Adder.outputs[0]["data"])
+    ctx.set(dut.instr_bus.data, {"constant": 1, "src_addr": 1, "dst_addr": dut.Adder.inputs[1]["addr"]})
     if n == 1:
         await ctx.tick(domain="falling")
-        return ctx.get(dut.Adder.regs[2]["data"])
+        return ctx.get(dut.Adder.outputs[0]["data"])
     for i in range(2, n + 1):
         await ctx.tick(domain="falling")
-        ctx.set(dut.instr_bus.data, {"constant": 0, "src_addr": 2, "dst_addr": (i % 2)})
+        ctx.set(
+            dut.instr_bus.data,
+            {"constant": 0, "src_addr": dut.Adder.outputs[0]["addr"], "dst_addr": dut.Adder.inputs[(i % 2)]["addr"]},
+        )
     await ctx.tick(domain="rising")
     return ctx.get(dut.data_bus.data.data)
 

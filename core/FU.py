@@ -17,39 +17,54 @@ class FU(Elaboratable):
         data_bus: Bus,
         input_count: int,
         output_count: int,
-        address: int,
-        trigger_pos: Iterable[int],
+        inout_count: int,
+        input_address: int,
+        output_address: int,
+        inout_address: int,
     ):
         self.instr_bus = instr_bus
         self.data_bus = data_bus
 
         self.input_count = input_count
         self.output_count = output_count
-        self.port_count = self.input_count + self.output_count
+        self.inout_count = inout_count
 
-        self.address = address
-        for trigger in trigger_pos:
-            if trigger >= self.port_count:
-                raise IncorrectTriggerPosition(
-                    f"Given trigger port position {trigger} is greater than number of ports ({self.port_count}) of functional unit."
-                )
-        self.trigger_pos = trigger_pos
-        self.trigger_addrs = [Const(self.address + trigger) for trigger in trigger_pos]
-        self.regs = [
-            {"addr": Const(self.address + i), "data": Signal.like(data_bus.data.data)} for i in range(self.port_count)
+        self.input_address = input_address
+        self.output_address = output_address
+        self.inout_address = inout_address
+
+        self.inputs = [
+            {"addr": Const(self.input_address + i), "data": Signal.like(data_bus.data.data, name="input")}
+            for i in range(self.input_count)
+        ]
+        self.outputs = [
+            {"addr": Const(self.output_address + i), "data": Signal.like(data_bus.data.data, name="output")}
+            for i in range(self.output_count)
+        ]
+        self.inouts = [
+            {"addr": Const(self.inout_address + i), "data": Signal.like(data_bus.data.data, name="inout")}
+            for i in range(self.inout_count)
         ]
 
     def elaborate(self, platform):
         m = Module()
 
-        for i in range(self.port_count):
-            if i < self.input_count:
-                with m.If(self.instr_bus.data.dst_addr == self.regs[i]["addr"]):
-                    m.d.falling += self.regs[i]["data"].eq(
-                        Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
-                    )
-            else:
-                with m.If((self.instr_bus.data.src_addr == self.regs[i]["addr"]) & ~self.instr_bus.data.constant):
-                    m.d.rising += self.data_bus.data.data.eq(self.regs[i]["data"])
+        for i in range(self.input_count):
+            with m.If(self.instr_bus.data.dst_addr == self.inputs[i]["addr"]):
+                m.d.falling += self.inputs[i]["data"].eq(
+                    Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
+                )
+
+        for i in range(self.output_count):
+            with m.If((self.instr_bus.data.src_addr == self.outputs[i]["addr"]) & ~self.instr_bus.data.constant):
+                m.d.rising += self.data_bus.data.data.eq(self.outputs[i]["data"])
+
+        for i in range(self.inout_count):
+            with m.If(self.instr_bus.data.dst_addr == self.inouts[i]["addr"]):
+                m.d.falling += self.inouts[i]["data"].eq(
+                    Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
+                )
+            with m.If((self.instr_bus.data.src_addr == self.inouts[i]["addr"]) & ~self.instr_bus.data.constant):
+                m.d.rising += self.data_bus.data.data.eq(self.inouts[i]["data"])
 
         return m

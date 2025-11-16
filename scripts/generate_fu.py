@@ -4,39 +4,53 @@ import json
 from pathlib import Path
 from typing import Iterable
 
-TEMPLATE_PREFIX = """from amaranth import *
+TEMPLATE = """from amaranth import *
 from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
 class {FUname}(FU):        
-    def __init__(self, instr_bus : Bus, data_bus : Bus, input_count : int, output_count : int, address : int, trigger_pos : int):
-        super().__init__(instr_bus=instr_bus, data_bus=data_bus, input_count=input_count, output_count=output_count, address=address, trigger_pos=trigger_pos)
+    def __init__(
+        self,
+        instr_bus: Bus,
+        data_bus: Bus,
+        input_count: int,
+        output_count: int,
+        inout_count: int,
+        input_address: int,
+        inout_address: int,
+        output_address: int,
+    ):
+        super().__init__(
+            instr_bus=instr_bus,
+            data_bus=data_bus,
+            input_count=input_count,
+            output_count=output_count,
+            inout_count=inout_count,
+            input_address=input_address,
+            inout_address=inout_address,
+            output_address=output_address,
+        )
     
     def elaborate(self, platform):
         m = super().elaborate(platform)
-"""
-TEMPLATE_LOGIC = """
-        with m.If(self.instr_bus.data.dst_addr == {trigger_addr}):
-            # place for your code
-            # m.d.falling += ...
-            ...
-"""
-TEMPLATE_SUFFIX = """
+
+        # here you can react on writes into trigger addresses 
+        # here place your code, for example:
+        # with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
+        #   m.d.falling += ...
+
         return m
 
 register_fu("{FUname}", {FUname})
 """
 
 
-def generate_fu(target_dir: Path, fu_name: str, trigger_addrs: Iterable[int]):
+def generate_fu(target_dir: Path, fu_name: str):
     fu_file = target_dir / f"{fu_name}.py"
     if fu_file.exists():
         return
-    content = TEMPLATE_PREFIX.format(FUname=fu_name)
-    for trigger_addr in trigger_addrs:
-        content += TEMPLATE_LOGIC.format(trigger_addr=trigger_addr)
-    content += TEMPLATE_SUFFIX.format(FUname=fu_name)
+    content = TEMPLATE.format(FUname=fu_name)
     fu_file.write_text(content)
 
 
@@ -53,17 +67,24 @@ def main():
     with config_path.open() as f:
         configuration = json.load(f)
 
-    input_count = 0
+    input_count = 1  # address 0 is reserved and contains 0
     output_count = 0
+    inout_count = 0
     for f_unit in configuration["functional_units"]:
-        f_unit["address"] = input_count + output_count
+        f_unit["input_address"] = input_count
         input_count += f_unit["inputs"]
+        generate_fu(fu_dir, f_unit["name"])
+    for f_unit in configuration["functional_units"]:
+        f_unit["inout_address"] = input_count + inout_count
+        inout_count += f_unit["inouts"]
+    for f_unit in configuration["functional_units"]:
+        f_unit["output_address"] = input_count + inout_count + output_count
         output_count += f_unit["outputs"]
-        generate_fu(fu_dir, f_unit["name"], [trig_pos + f_unit["address"] for trig_pos in f_unit["trigger_positions"]])
     configuration["src_addr_width"] = src_addr_width = max(
-        output_count.bit_length(), min(configuration["minimal_constant_size"], configuration["word_size"])
+        (output_count + inout_count).bit_length(),
+        min(configuration["minimal_constant_size"], configuration["word_size"]),
     )
-    configuration["dest_addr_width"] = dest_addr_width = input_count.bit_length()
+    configuration["dest_addr_width"] = dest_addr_width = (input_count + inout_count).bit_length()
     configuration["src_addr_width"] += (
         (1 << (src_addr_width + dest_addr_width).bit_length()) - src_addr_width - dest_addr_width - 1
         if configuration["i_really_like_powers_of_2"]

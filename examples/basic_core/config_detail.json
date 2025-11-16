@@ -1,29 +1,29 @@
 {
     "name": "ExampleTTA",
     "word_size": 16,
+    "instruction_memory_size": 65000,
     "functional_units": [
         {
             "name": "Adder",
             "inputs": 2,
             "outputs": 1,
-            "trigger_positions": [
-                0,
-                1
-            ],
+            "inouts": 0,
             "description": "Adds the operands",
-            "address": 0
+            "input_address": 1,
+            "inout_address": 3,
+            "output_address": 7
         },
         {
-            "name": "Result",
-            "inputs": 1,
+            "name": "Regs",
+            "inputs": 0,
             "outputs": 0,
-            "trigger_positions": [
-                0
-            ],
+            "inouts": 4,
             "description": "Result register for debug purpose",
-            "address": 3
+            "input_address": 3,
+            "inout_address": 3,
+            "output_address": 8
         }
     ],
-    "src_addr_width": 13,
-    "dest_addr_width": 2
+    "src_addr_width": 12,
+    "dest_addr_width": 3
 }

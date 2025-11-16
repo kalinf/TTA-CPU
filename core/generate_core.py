@@ -41,8 +41,10 @@ def gen_core(directory: Path):
                         FU_REGISTRY[name],
                         input_count=f_unit["inputs"],
                         output_count=f_unit["outputs"],
-                        address=f_unit["address"],
-                        trigger_pos=f_unit["trigger_positions"],
+                        inout_count=f_unit["inouts"],
+                        input_address=f_unit["input_address"],
+                        inout_address=f_unit["inout_address"],
+                        output_address=f_unit["output_address"],
                     ),
                 )
             ]
