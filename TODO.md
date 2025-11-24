@@ -11,15 +11,15 @@
     - ~~pierwszy działający test~~
     - ~~ogarnięcie pytest~~
     - tłumaczenie czytelnych transportów (Adder.i0 -> Result.trigger) na "assembler"
-- brak operacji nie zmieniający stanu
-    - przydzielanie rejestrów od 1
-- porty inout
-- fix: poprawne przydzielanie portów
+- ~~brak operacji nie zmieniający stanu~~
+    - ~~przydzielanie rejestrów od 1~~
+- ~~porty inout~~
+- ~~fix: poprawne przydzielanie portów~~
 - porządne komentarze
 - pamięć programu
 - pamięć danych
 - logical operations unit
-- instruction operation fu
+- ~~instruction operation fu~~
 - uniwersalne tesy "assemblerowe"
 - testy uruchamiane na FPGA
     - ~~zdobycie (drogą kupna lub wypożyczenia) devkitu FPGA~~

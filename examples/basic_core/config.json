@@ -3,21 +3,43 @@
   "i_really_like_powers_of_2": true,
   "word_size": 16,
   "minimal_constant_size" : 7,
-  "instruction_memory_size": 65000,
+  "instruction_memory_depth": 100,
+  "instruction_memory_read_ports": 2,
   "functional_units": [
     {
       "name": "Adder",
       "inputs": 2,
       "outputs": 1,
       "inouts": 0,
-      "description": "Adds the operands"
+      "description": "Adds the operands."
     },
     {
-      "name": "Regs",
+      "name": "Increaser",
       "inputs": 0,
       "outputs": 0,
-      "inouts": 4,
-      "description": "Result register for debug purpose"
+      "inouts": 2,
+      "description": "Increments the main value by another value during each readout."
+    },
+    {
+      "name": "Logical",
+      "inputs": 3,
+      "outputs": 6,
+      "inouts": 0,
+      "description": "Logical operations."
+    },
+    {
+      "name": "Fetcher",
+      "inputs": 2,
+      "outputs": 0,
+      "inouts": 0,
+      "description": "Fetches correct instruction from instruction memory."
+    },
+    {
+      "name": "Result",
+      "inputs": 1,
+      "outputs": 0,
+      "inouts": 0,
+      "description": "Result register for debug purpose."
     }
   ]
 }

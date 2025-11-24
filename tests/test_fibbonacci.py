@@ -1,9 +1,12 @@
 import pytest
 from amaranth import *
 from amaranth.sim import Simulator
+from tests.utils import base_asm_test, resolve_bb_labels
+from tests.asm.fibonacci import fibonacci_no_loop, fibonacci_loop
+from core.generate_core import gen_core
 
 
-def fibbonacci(n):
+def fibonacci(n):
     f = [0, 1]
     if n < 2:
         return f[n]
@@ -43,11 +46,11 @@ async def sim_fib(ctx, dut, n):
 
 
 @pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
-def test_fib(core, vcd_file, n):
+def test_fib_no_memory(core, vcd_file, n):
     expected = fib(n)
 
     sim = Simulator(core)
-    sim.add_clock(1e-6, domain="rising")
+    sim.add_clock(1e-6, domain="mem")
 
     async def tb(ctx):
         result = await sim_fib(ctx, core, n)
@@ -59,3 +62,20 @@ def test_fib(core, vcd_file, n):
             sim.run()
     else:
         sim.run()
+
+
+@pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
+def test_fib_no_loop_asm(core, dir_path, vcd_file, n):
+    expected = fib(n)
+    init = fibonacci_no_loop(core, n)
+    dut = gen_core(dir_path, init)
+    base_asm_test(core=dut, vcd_file=vcd_file, instr_memory_init=init, expected=expected)
+
+
+@pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
+def test_fib_loop_asm(core, dir_path, vcd_file, n):
+    expected = fib(n)
+    init = fibonacci_loop(core, n)
+    resolved_init = resolve_bb_labels(init)
+    dut = gen_core(dir_path, resolved_init)
+    base_asm_test(core=dut, vcd_file=vcd_file, instr_memory_init=init, expected=expected)

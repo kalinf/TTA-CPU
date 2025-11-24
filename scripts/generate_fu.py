@@ -5,11 +5,21 @@ from pathlib import Path
 from typing import Iterable
 
 TEMPLATE = """from amaranth import *
+{extraImports}
 from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
-class {FUname}(FU):        
+class {FUname}(FU):   
+    \"\"\"
+    {FUdescription}
+     
+    Communication ports:
+    ----------
+    {inputCount} Inputs: 
+    {outputCount} Outputs: 
+    {inoutCount} Inouts: 
+    \"\"\"
     def __init__(
         self,
         instr_bus: Bus,
@@ -20,6 +30,7 @@ class {FUname}(FU):
         input_address: int,
         inout_address: int,
         output_address: int,
+        {extraArgs}
     ):
         super().__init__(
             instr_bus=instr_bus,
@@ -31,10 +42,11 @@ class {FUname}(FU):
             inout_address=inout_address,
             output_address=output_address,
         )
+        {extraCodeInit}
     
     def elaborate(self, platform):
         m = super().elaborate(platform)
-
+        {extraCodeElaborate}
         # here you can react on writes into trigger addresses 
         # here place your code, for example:
         # with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
@@ -45,12 +57,42 @@ class {FUname}(FU):
 register_fu("{FUname}", {FUname})
 """
 
+FETCHER_IMPORTS = """from core.utils.ReadPort import ReadPort"""
 
-def generate_fu(target_dir: Path, fu_name: str):
+FETCHER_ARGS = """instruction_memory_depth: int,
+        instruction_memory_read_ports: int,"""
+
+FETCHER_CODE_INIT = """self.instruction_memory_depth = instruction_memory_depth
+        self.instruction_memory_read_ports = instruction_memory_read_ports
+        self.instr_read_ports = [ReadPort(depth=instruction_memory_depth, shape=self.instr_bus.data.shape()) for _ in range(instruction_memory_read_ports)]"""
+
+
+def generate_fu(
+    target_dir: Path,
+    fu_name: str,
+    fu_description: str = "",
+    input_count: int = 0,
+    output_count: int = 0,
+    inout_count: int = 0,
+    extra_args: str = "",
+    extra_code_elaborate: str = "",
+    extra_code_init: str = "",
+    extra_imports: str = "",
+):
     fu_file = target_dir / f"{fu_name}.py"
     if fu_file.exists():
         return
-    content = TEMPLATE.format(FUname=fu_name)
+    content = TEMPLATE.format(
+        FUname=fu_name,
+        FUdescription=fu_description,
+        extraCodeInit=extra_code_init,
+        extraCodeElaborate=extra_code_elaborate,
+        extraImports=extra_imports,
+        extraArgs=extra_args,
+        inputCount=input_count,
+        outputCount=output_count,
+        inoutCount=inout_count,
+    )
     fu_file.write_text(content)
 
 
@@ -73,7 +115,27 @@ def main():
     for f_unit in configuration["functional_units"]:
         f_unit["input_address"] = input_count
         input_count += f_unit["inputs"]
-        generate_fu(fu_dir, f_unit["name"])
+        if f_unit["name"] == "Fetcher":
+            generate_fu(
+                fu_dir,
+                f_unit["name"],
+                fu_description=f_unit["description"],
+                extra_args=FETCHER_ARGS,
+                extra_imports=FETCHER_IMPORTS,
+                extra_code_init=FETCHER_CODE_INIT,
+                input_count=f_unit["inputs"],
+                output_count=f_unit["outputs"],
+                inout_count=f_unit["inouts"],
+            )
+        else:
+            generate_fu(
+                fu_dir,
+                f_unit["name"],
+                fu_description=f_unit["description"],
+                input_count=f_unit["inputs"],
+                output_count=f_unit["outputs"],
+                inout_count=f_unit["inouts"],
+            )
     for f_unit in configuration["functional_units"]:
         f_unit["inout_address"] = input_count + inout_count
         inout_count += f_unit["inouts"]

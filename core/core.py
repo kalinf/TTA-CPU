@@ -1,8 +1,7 @@
 from amaranth import *
-from typing import final
+from amaranth.lib.memory import Memory
 from .layouts import DataLayout, InstructionLayout
 from .bus import Bus
-import json
 
 
 class TTA_Core(Elaboratable):
@@ -19,9 +18,21 @@ class TTA_Core(Elaboratable):
         ...
     """
 
-    def __init__(self, src_addr_width, dest_addr_width, data_width, FUs):
+    def __init__(
+        self,
+        src_addr_width,
+        dest_addr_width,
+        data_width,
+        FUs,
+        instr_memory_depth,
+        instr_memory_rports=1,
+        instr_memory_init=[],
+    ):
         self.instr_layout = InstructionLayout(src_addr_width=src_addr_width, dest_addr_width=dest_addr_width)
         self.data_layout = DataLayout(data_width=data_width)
+        self.instr_memory_depth = instr_memory_depth
+        self.instr_memory_rports = instr_memory_rports
+        self.instr_memory_init = instr_memory_init
         self.FUs = FUs
         self.instr_bus = Bus(self.instr_layout)
         self.data_bus = Bus(self.data_layout)
@@ -29,18 +40,40 @@ class TTA_Core(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
+        m.domains.mem = cd_mem = ClockDomain(local=True)
+        m.domains.neg_mem = cd_neg_mem = ClockDomain(local=True, clk_edge="neg")
         m.domains.rising = cd_rising = ClockDomain(local=True)
         m.domains.falling = cd_falling = ClockDomain(local=True, clk_edge="neg")
 
-        m.d.comb += [
-            cd_falling.clk.eq(cd_rising.clk),
-        ]
+        m.d.comb += [cd_falling.clk.eq(cd_rising.clk), cd_neg_mem.clk.eq(cd_mem.clk)]
+        m.d.neg_mem += [cd_rising.clk.eq(~cd_rising.clk)]
 
         m.submodules.data_bus = self.data_bus
         m.submodules.instr_bus = self.instr_bus
 
+        m.submodules.instr_mem = self.instr_mem = instr_mem = Memory(
+            shape=self.instr_layout, depth=self.instr_memory_depth, init=self.instr_memory_init
+        )
+        instr_write_port = instr_mem.write_port(domain="mem")
+        instr_read_ports = [instr_mem.read_port(domain="mem") for _ in range(self.instr_memory_rports)]
+
         for fu in self.FUs:
-            m.submodules[fu[0]] = fu[1](instr_bus=self.instr_bus, data_bus=self.data_bus)
+            if fu[0] == "Fetcher":
+                m.submodules[fu[0]] = fu[1](
+                    instr_bus=self.instr_bus,
+                    data_bus=self.data_bus,
+                    instruction_memory_depth=self.instr_memory_depth,
+                    instruction_memory_read_ports=self.instr_memory_rports,
+                )
+                for i, instr_read_port in enumerate(m.submodules[fu[0]].instr_read_ports):
+                    m.d.comb += [
+                        instr_read_ports[i].addr.eq(instr_read_port.addr),
+                        instr_read_ports[i].en.eq(instr_read_port.en),
+                        instr_read_port.data.eq(instr_read_ports[i].data),
+                    ]
+            else:
+                m.submodules[fu[0]] = fu[1](instr_bus=self.instr_bus, data_bus=self.data_bus)
+
             setattr(self, fu[0], m.submodules[fu[0]])
 
         return m
