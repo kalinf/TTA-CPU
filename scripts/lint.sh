@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# script from https://github.com/kuznia-rdzeni/coreblocks/
+
 MAX_LINE_LENGTH=120
 
 prog_name=$(basename $0)

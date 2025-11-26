@@ -40,12 +40,17 @@ class TTA_Core(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
+        clk = platform.request("clk25")
         m.domains.mem = cd_mem = ClockDomain(local=True)
         m.domains.neg_mem = cd_neg_mem = ClockDomain(local=True, clk_edge="neg")
         m.domains.rising = cd_rising = ClockDomain(local=True)
         m.domains.falling = cd_falling = ClockDomain(local=True, clk_edge="neg")
 
-        m.d.comb += [cd_falling.clk.eq(cd_rising.clk), cd_neg_mem.clk.eq(cd_mem.clk)]
+        m.d.comb += [
+            cd_mem.clk.eq(clk.i),
+            cd_falling.clk.eq(cd_rising.clk),
+            cd_neg_mem.clk.eq(cd_mem.clk),
+        ]
         m.d.neg_mem += [cd_rising.clk.eq(~cd_rising.clk)]
 
         m.submodules.data_bus = self.data_bus
@@ -75,5 +80,25 @@ class TTA_Core(Elaboratable):
                 m.submodules[fu[0]] = fu[1](instr_bus=self.instr_bus, data_bus=self.data_bus)
 
             setattr(self, fu[0], m.submodules[fu[0]])
+
+        with m.If(~self.instr_bus.data.constant):
+            with m.Switch(self.instr_bus.data.src_addr):
+                for fu in self.FUs:
+                    for output in m.submodules[fu[0]].outputs:
+                        with m.Case(output["addr"]):
+                            m.d.rising += self.data_bus.data.data.eq(output["data"])
+                    for inout in m.submodules[fu[0]].inouts:
+                        with m.Case(inout["addr"]):
+                            m.d.rising += self.data_bus.data.data.eq(inout["data"])
+
+        # DEBUG PURPOSES ONLY
+        result = platform.request("result")
+        write_port = platform.request("write_port")
+        m.d.comb += [
+            result.o.eq(m.submodules["Result"].inputs[0]["data"]),
+            instr_write_port.addr.eq(write_port.addr.i),
+            instr_write_port.en.eq(write_port.en.i),
+            instr_write_port.data.eq(write_port.data.i),
+        ]
 
         return m
