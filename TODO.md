@@ -28,6 +28,7 @@
     - uruchomienie na sprzęcie
     - możliwość zapisywania pamięci bez konieczności resyntezowania rdzenia
 - Licencja i przeklejone notki licencyjne z miejsc skąd brałam kod (colorlight i9, coreblocks)
+- PLL żeby mieć faktycznie fajniejszą częstotliwość niż 12 MHz
 
 ## Nice to have
 - częściowo pipelined TTA
@@ -39,3 +40,18 @@
 ## Optional
 - UART
 - wiele możliwych szyn instrukcji (VLIV)
+
+
+co przed wtorkiem:
+- budowanie "assembly" nie z dut obiektu rdzenia a z obiektu stworzonego z pliku konfiguracyjnego (same adresy)
+- przykład lepszego fetchera dla fibonacciego i test lepszy fibonacciego
+- przygotowanie zestawienia, co robili inni (wielocyklowość, operowanie na pamięci)
+- pamięć programu
+- żeby się i syntezowało i pytestowało
+
+co potem:
+- programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
+- częściowo pipelined
+- wiele możliwych szyn instrukcji (VLIV)
+- wiele możliwych szyn danych (przerwania między jednostkami)
+- komunikacja z komputerem

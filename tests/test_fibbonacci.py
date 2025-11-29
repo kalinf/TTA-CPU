@@ -65,17 +65,17 @@ def test_fib_no_memory(core, vcd_file, n):
 
 
 @pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
-def test_fib_no_loop_asm(core, dir_path, vcd_file, n):
+def test_fib_no_loop_asm(core_address_model, dir_path, vcd_file, n):
     expected = fib(n)
-    init = fibonacci_no_loop(core, n)
-    dut = gen_core(dir_path, init)
-    base_asm_test(core=dut, vcd_file=vcd_file, instr_memory_init=init, expected=expected)
+    init = fibonacci_no_loop(core_address_model, n)
+    core = gen_core(dir_path, init)
+    base_asm_test(core=core, vcd_file=vcd_file, instr_memory_init=init, expected=expected)
 
 
 @pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
-def test_fib_loop_asm(core, dir_path, vcd_file, n):
+def test_fib_loop_asm(core_address_model, dir_path, vcd_file, n):
     expected = fib(n)
-    init = fibonacci_loop(core, n)
+    init = fibonacci_loop(core_address_model, n)
     resolved_init = resolve_bb_labels(init)
-    dut = gen_core(dir_path, resolved_init)
-    base_asm_test(core=dut, vcd_file=vcd_file, instr_memory_init=init, expected=expected)
+    core = gen_core(dir_path, resolved_init)
+    base_asm_test(core=core, vcd_file=vcd_file, instr_memory_init=init, expected=expected)

@@ -1,6 +1,7 @@
 import pytest
 from pathlib import Path
 from core.generate_core import gen_core
+from tests.utils import build_addresses_core_model
 
 CONFTEST_DIR = Path(__file__).resolve().parent
 DEFAULT_CORE_PATH = (CONFTEST_DIR / ".." / "examples" / "basic_core").resolve()
@@ -28,6 +29,12 @@ def dir_path(request):
 def core(dir_path):
     dut = gen_core(dir_path)
     return dut
+
+
+@pytest.fixture(scope="session")
+def core_address_model(dir_path):
+    model = build_addresses_core_model(dir_path / "config_detail.json")
+    return model
 
 
 @pytest.fixture

@@ -20,7 +20,7 @@ def load_all_fu_classes(fu_dir: Path):
         spec.loader.exec_module(module)
 
 
-def gen_core(directory: Path, instr_memory_init=[]):
+def gen_core(directory: Path, instr_memory_init=[], synthesis=False):
     target_dir = directory.resolve()
     fu_dir = target_dir / "fu"
     config_path = target_dir / "config_detail.json"
@@ -59,5 +59,6 @@ def gen_core(directory: Path, instr_memory_init=[]):
         instr_memory_depth=configuration["instruction_memory_depth"],
         instr_memory_init=instr_memory_init,
         instr_memory_rports=configuration["instruction_memory_read_ports"],
+        synthesis=synthesis,
     )
     return core

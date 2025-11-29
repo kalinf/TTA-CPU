@@ -1,4 +1,6 @@
 from amaranth import *
+from pathlib import Path
+import json
 from amaranth.sim import Simulator
 
 
@@ -65,3 +67,21 @@ def resolve_bb_labels(init):
             resolved_init.append(item)
 
     return resolved_init
+
+
+def build_addresses_core_model(config_detail_file: Path):
+    with config_detail_file.open() as f:
+        configuration = json.load(f)
+
+    class CoreModel:
+        def __init__(self, configuration):
+            for fu in configuration["functional_units"]:
+                setattr(self, fu["name"], self.FUModel(fu))
+
+        class FUModel:
+            def __init__(self, fu):
+                self.inputs = list(range(fu["input_address"], fu["input_address"] + fu["inputs"]))
+                self.outputs = list(range(fu["output_address"], fu["output_address"] + fu["outputs"]))
+                self.inouts = list(range(fu["inout_address"], fu["inout_address"] + fu["inouts"]))
+
+    return CoreModel(configuration)

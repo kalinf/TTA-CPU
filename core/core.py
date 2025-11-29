@@ -1,5 +1,6 @@
 from amaranth import *
 from amaranth.lib.memory import Memory
+from amaranth.utils import ceil_log2
 from .layouts import DataLayout, InstructionLayout
 from .bus import Bus
 
@@ -27,6 +28,7 @@ class TTA_Core(Elaboratable):
         instr_memory_depth,
         instr_memory_rports=1,
         instr_memory_init=[],
+        synthesis=False,
     ):
         self.instr_layout = InstructionLayout(src_addr_width=src_addr_width, dest_addr_width=dest_addr_width)
         self.data_layout = DataLayout(data_width=data_width)
@@ -36,18 +38,31 @@ class TTA_Core(Elaboratable):
         self.FUs = FUs
         self.instr_bus = Bus(self.instr_layout)
         self.data_bus = Bus(self.data_layout)
+        self.synthesis = synthesis
+        if synthesis:
+            self.clk = Signal()
+        # synthesis don't throw away my design pleaaaaase
+        self.result = Signal(data_width)
+        self.write_port = Record(
+            [
+                ("addr", ceil_log2(instr_memory_depth)),
+                ("en", 1),
+                ("data", self.instr_layout),
+            ]
+        )
 
     def elaborate(self, platform):
         m = Module()
 
-        clk = platform.request("clk25")
         m.domains.mem = cd_mem = ClockDomain(local=True)
         m.domains.neg_mem = cd_neg_mem = ClockDomain(local=True, clk_edge="neg")
         m.domains.rising = cd_rising = ClockDomain(local=True)
         m.domains.falling = cd_falling = ClockDomain(local=True, clk_edge="neg")
 
+        if self.synthesis:
+            m.d.comb += cd_mem.clk.eq(self.clk)
+        
         m.d.comb += [
-            cd_mem.clk.eq(clk.i),
             cd_falling.clk.eq(cd_rising.clk),
             cd_neg_mem.clk.eq(cd_mem.clk),
         ]
@@ -92,13 +107,13 @@ class TTA_Core(Elaboratable):
                             m.d.rising += self.data_bus.data.data.eq(inout["data"])
 
         # DEBUG PURPOSES ONLY
-        result = platform.request("result")
-        write_port = platform.request("write_port")
+        # result = platform.request("result")
+        # write_port = platform.request("write_port")
         m.d.comb += [
-            result.o.eq(m.submodules["Result"].inputs[0]["data"]),
-            instr_write_port.addr.eq(write_port.addr.i),
-            instr_write_port.en.eq(write_port.en.i),
-            instr_write_port.data.eq(write_port.data.i),
+            self.result.eq(m.submodules["Result"].inputs[0]["data"]),
+            instr_write_port.addr.eq(self.write_port.addr),
+            instr_write_port.en.eq(self.write_port.en),
+            instr_write_port.data.eq(self.write_port.data),
         ]
 
         return m
