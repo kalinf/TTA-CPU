@@ -11,8 +11,8 @@
             "inouts": 0,
             "description": "Adds the operands.",
             "input_address": 1,
-            "inout_address": 11,
-            "output_address": 13
+            "inout_address": 14,
+            "output_address": 18
         },
         {
             "name": "Increaser",
@@ -21,8 +21,18 @@
             "inouts": 2,
             "description": "Increments the main value by another value during each readout.",
             "input_address": 3,
-            "inout_address": 11,
-            "output_address": 14
+            "inout_address": 14,
+            "output_address": 19
+        },
+        {
+            "name": "Looper",
+            "inputs": 3,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Loops through a range of numbers.",
+            "input_address": 3,
+            "inout_address": 16,
+            "output_address": 19
         },
         {
             "name": "Logical",
@@ -30,9 +40,9 @@
             "outputs": 6,
             "inouts": 0,
             "description": "Logical operations.",
-            "input_address": 3,
-            "inout_address": 13,
-            "output_address": 14
+            "input_address": 6,
+            "inout_address": 16,
+            "output_address": 20
         },
         {
             "name": "Fetcher",
@@ -40,9 +50,19 @@
             "outputs": 2,
             "inouts": 0,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
-            "input_address": 6,
-            "inout_address": 13,
-            "output_address": 20
+            "input_address": 9,
+            "inout_address": 16,
+            "output_address": 26
+        },
+        {
+            "name": "Regs",
+            "inputs": 0,
+            "outputs": 0,
+            "inouts": 2,
+            "description": "General purpose registers.",
+            "input_address": 13,
+            "inout_address": 16,
+            "output_address": 28
         },
         {
             "name": "Result",
@@ -50,11 +70,11 @@
             "outputs": 0,
             "inouts": 0,
             "description": "Result register for debug purpose.",
-            "input_address": 10,
-            "inout_address": 13,
-            "output_address": 22
+            "input_address": 13,
+            "inout_address": 18,
+            "output_address": 28
         }
     ],
-    "src_addr_width": 11,
-    "dest_addr_width": 4
+    "src_addr_width": 10,
+    "dest_addr_width": 5
 }

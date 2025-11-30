@@ -61,7 +61,7 @@ class TTA_Core(Elaboratable):
 
         if self.synthesis:
             m.d.comb += cd_mem.clk.eq(self.clk)
-        
+
         m.d.comb += [
             cd_falling.clk.eq(cd_rising.clk),
             cd_neg_mem.clk.eq(cd_mem.clk),

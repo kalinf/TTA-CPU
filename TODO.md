@@ -29,13 +29,15 @@
     - możliwość zapisywania pamięci bez konieczności resyntezowania rdzenia
 - Licencja i przeklejone notki licencyjne z miejsc skąd brałam kod (colorlight i9, coreblocks)
 - PLL żeby mieć faktycznie fajniejszą częstotliwość niż 12 MHz
+- Indirect unit 
 
 ## Nice to have
 - częściowo pipelined TTA
 - ~~formatter~~
 - pyproject.toml
 - wiele możliwych szyn danych ("przerwania" między jednostkami)
-- pisanie pseudo assemblera n wykorzystaniem niekoniecznie instancji rdzenia (lepiej pliku konfiguracyjnego)
+- ~~pisanie pseudo assemblera z wykorzystaniem niekoniecznie instancji rdzenia (lepiej pliku konfiguracyjnego)~~
+- automatyczne wykrywanie Fmax i dostrajanie PLL pod ten Fmax (jest program który wylicza dla pll na ecp5)
 
 ## Optional
 - UART
@@ -43,11 +45,14 @@
 
 
 co przed wtorkiem:
-- budowanie "assembly" nie z dut obiektu rdzenia a z obiektu stworzonego z pliku konfiguracyjnego (same adresy)
+- ~~budowanie "assembly" nie z dut obiektu rdzenia a z obiektu stworzonego z pliku konfiguracyjnego (same adresy)~~
+- indirect unit
 - przykład lepszego fetchera dla fibonacciego i test lepszy fibonacciego
 - przygotowanie zestawienia, co robili inni (wielocyklowość, operowanie na pamięci)
 - pamięć programu
-- żeby się i syntezowało i pytestowało
+- ~~żeby się i syntezowało i pytestowało~~
+- procedury obsługi przerwań i reakcja na zdarzenia zewnętrzne
+- uruchamianie różnych testów dla różnych rdzeni
 
 co potem:
 - programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
@@ -55,3 +60,7 @@ co potem:
 - wiele możliwych szyn instrukcji (VLIV)
 - wiele możliwych szyn danych (przerwania między jednostkami)
 - komunikacja z komputerem
+
+pytania
+- programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
+- czy regenerować pliki fu przy ponownym generowaniu rdzenia

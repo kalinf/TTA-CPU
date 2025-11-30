@@ -21,6 +21,13 @@
       "description": "Increments the main value by another value during each readout."
     },
     {
+      "name": "Looper",
+      "inputs": 3,
+      "outputs": 1,
+      "inouts": 0,
+      "description": "Loops through a range of numbers."
+    },
+    {
       "name": "Logical",
       "inputs": 3,
       "outputs": 6,
@@ -33,6 +40,13 @@
       "outputs": 2,
       "inouts": 0,
       "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations."
+    },
+    {
+      "name": "Regs",
+      "inputs": 0,
+      "outputs": 0,
+      "inouts": 2,
+      "description": "General purpose registers."
     },
     {
       "name": "Result",
