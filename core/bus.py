@@ -25,9 +25,8 @@ class Bus(Elaboratable):
 
         src_loc = get_src_loc(src_loc)
         self.data = Signal(self.layout)
-        self.int_data = Signal(self.layout)
 
     def elaborate(self, platform):
         m = Module()
-        m.d.comb += self.int_data.eq(self.data)
+
         return m

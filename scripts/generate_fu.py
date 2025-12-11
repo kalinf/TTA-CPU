@@ -4,8 +4,7 @@ import json
 from pathlib import Path
 from typing import Iterable
 
-TEMPLATE = """from amaranth import *
-{extraImports}
+TEMPLATE = """from amaranth import *{extraImports}
 from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
@@ -29,8 +28,7 @@ class {FUname}(FU):
         inout_count: int,
         input_address: int,
         inout_address: int,
-        output_address: int,
-        {extraArgs}
+        output_address: int,{extraArgs}
     ):
         super().__init__(
             instr_bus=instr_bus,
@@ -57,7 +55,11 @@ class {FUname}(FU):
 register_fu("{FUname}", {FUname})
 """
 
-FETCHER_IMPORTS = """from core.utils.ReadPort import ReadPort"""
+NEWLINE = """
+        """
+
+FETCHER_IMPORTS = """
+from core.utils.ReadPort import ReadPort"""
 
 FETCHER_ARGS = """instruction_memory_depth: int,
         instruction_memory_read_ports: int,"""
@@ -65,6 +67,80 @@ FETCHER_ARGS = """instruction_memory_depth: int,
 FETCHER_CODE_INIT = """self.instruction_memory_depth = instruction_memory_depth
         self.instruction_memory_read_ports = instruction_memory_read_ports
         self.instr_read_ports = [ReadPort(depth=instruction_memory_depth, shape=self.instr_bus.data.shape()) for _ in range(instruction_memory_read_ports)]"""
+
+RESOURCE_CODE_INIT = """self.resources = resources"""
+
+RESOURCE_IMPORTS = """
+from amaranth.build import Resource"""
+
+RESOURCE_ARGS = """resources: dict[str, Resource],"""
+
+RESOURCE_SIGNAL_DECLARATION = """{resource} = Signal.like(self.resources["{resource}"].{inout}, name="{resource}")"""
+
+COMBINATIONAL = """m.d.comb += [{assignments}]"""
+
+RESOURCE_ASSIGNMENT = """{signal0}.eq({signal1}),"""
+
+
+def get_rsrc(resources, name):
+    for rsrc in resources:
+        if rsrc["name"] == name:
+            return rsrc
+    raise KeyError(f"No resource named {name}.")
+
+
+def get_extra_code_elaborate(fu, resrcs):
+    res = ""
+    if "resources" in fu:
+        for resource in fu["resources"]:
+            res += NEWLINE
+            res += RESOURCE_SIGNAL_DECLARATION.format(
+                resource=resource, inout=get_rsrc(resrcs, resource)["pins"]["dir"]
+            )
+        res += NEWLINE
+        assignments = ""
+        for resource in fu["resources"]:
+            assignments += RESOURCE_ASSIGNMENT.format(
+                signal0=(
+                    resource
+                    if get_rsrc(resrcs, resource)["pins"]["dir"] == "i"
+                    else ('self.resources["' + resource + '"].o')
+                ),
+                signal1=(
+                    ('self.resources["' + resource + '"].i')
+                    if get_rsrc(resrcs, resource)["pins"]["dir"] == "i"
+                    else resource
+                ),
+            )
+        res += COMBINATIONAL.format(assignments=assignments)
+    return res
+
+
+def get_extra_code_init(fu):
+    res = ""
+    if fu["name"] == "Fetcher":
+        res += NEWLINE + FETCHER_CODE_INIT
+    if "resources" in fu:
+        res += NEWLINE + RESOURCE_CODE_INIT
+    return res
+
+
+def get_extra_imports(fu):
+    res = ""
+    if fu["name"] == "Fetcher":
+        res += FETCHER_IMPORTS
+    if "resources" in fu:
+        res += RESOURCE_IMPORTS
+    return res
+
+
+def get_extra_args(fu):
+    res = ""
+    if fu["name"] == "Fetcher":
+        res += NEWLINE + FETCHER_ARGS
+    if "resources" in fu:
+        res += NEWLINE + RESOURCE_ARGS
+    return res
 
 
 def generate_fu(
@@ -109,33 +185,25 @@ def main():
     with config_path.open() as f:
         configuration = json.load(f)
 
+    resources = configuration["resources"]
     input_count = 1  # address 0 is reserved and contains 0
     output_count = 0
     inout_count = 0
     for f_unit in configuration["functional_units"]:
         f_unit["input_address"] = input_count
         input_count += f_unit["inputs"]
-        if f_unit["name"] == "Fetcher":
-            generate_fu(
-                fu_dir,
-                f_unit["name"],
-                fu_description=f_unit["description"],
-                extra_args=FETCHER_ARGS,
-                extra_imports=FETCHER_IMPORTS,
-                extra_code_init=FETCHER_CODE_INIT,
-                input_count=f_unit["inputs"],
-                output_count=f_unit["outputs"],
-                inout_count=f_unit["inouts"],
-            )
-        else:
-            generate_fu(
-                fu_dir,
-                f_unit["name"],
-                fu_description=f_unit["description"],
-                input_count=f_unit["inputs"],
-                output_count=f_unit["outputs"],
-                inout_count=f_unit["inouts"],
-            )
+        generate_fu(
+            fu_dir,
+            f_unit["name"],
+            fu_description=f_unit["description"],
+            extra_args=get_extra_args(f_unit),
+            extra_imports=get_extra_imports(f_unit),
+            extra_code_init=get_extra_code_init(f_unit),
+            extra_code_elaborate=get_extra_code_elaborate(f_unit, resources),
+            input_count=f_unit["inputs"],
+            output_count=f_unit["outputs"],
+            inout_count=f_unit["inouts"],
+        )
     for f_unit in configuration["functional_units"]:
         f_unit["inout_address"] = input_count + inout_count
         inout_count += f_unit["inouts"]
@@ -158,6 +226,8 @@ def main():
     config_detail_path = target_dir / "config_detail.json"
     with config_detail_path.open(mode="w", encoding="utf-8") as f:
         json.dump(configuration, f, ensure_ascii=False)
+
+    # odpal tutaj formatting
 
 
 if __name__ == "__main__":

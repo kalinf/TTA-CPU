@@ -1,0 +1,98 @@
+{
+    "name": "ExampleTTA",
+    "i_really_like_powers_of_2": true,
+    "word_size": 16,
+    "minimal_constant_size": 7,
+    "instruction_memory_depth": 100,
+    "instruction_memory_read_ports": 2,
+    "functional_units": [
+        {
+            "name": "Adder",
+            "inputs": 2,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Adds the operands."
+        },
+        {
+            "name": "Increaser",
+            "inputs": 0,
+            "outputs": 0,
+            "inouts": 2,
+            "description": "Increments the main value by another value during each readout."
+        },
+        {
+            "name": "Looper",
+            "inputs": 3,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Loops through a range of numbers."
+        },
+        {
+            "name": "Logical",
+            "inputs": 3,
+            "outputs": 6,
+            "inouts": 0,
+            "description": "Logical operations."
+        },
+        {
+            "name": "Fetcher",
+            "inputs": 4,
+            "outputs": 2,
+            "inouts": 0,
+            "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
+            "resources": [
+                "button"
+            ]
+        },
+        {
+            "name": "Regs",
+            "inputs": 0,
+            "outputs": 0,
+            "inouts": 2,
+            "description": "General purpose registers."
+        },
+        {
+            "name": "Result",
+            "inputs": 1,
+            "outputs": 0,
+            "inouts": 0,
+            "description": "Result register for debug purpose."
+        },
+        {
+            "name": "Pins",
+            "inputs": 1,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "External pins for input/output.",
+            "resources": [
+                "button",
+                "leds"
+            ]
+        }
+    ],
+    "resources": [
+        {
+            "name": "button",
+            "number": 0,
+            "pins": {
+                "pins": "B2",
+                "dir": "i"
+            },
+            "attrs": {
+                "IO_TYPE": "LVCMOS33"
+            }
+        },
+        {
+            "name": "leds",
+            "number": 0,
+            "pins": {
+                "pins": "E1 E4 F3 H3 H5 J5 A2 K4",
+                "dir": "o",
+                "invert": true
+            },
+            "attrs": {
+                "IO_TYPE": "LVCMOS33"
+            }
+        }
+    ]
+}

@@ -1,3 +1,4 @@
+import inspect
 from amaranth import *
 from amaranth.lib.memory import Memory
 from amaranth.utils import ceil_log2
@@ -28,6 +29,8 @@ class TTA_Core(Elaboratable):
         instr_memory_depth,
         instr_memory_rports=1,
         instr_memory_init=[],
+        resources={},
+        fu_resources={},
         synthesis=False,
     ):
         self.instr_layout = InstructionLayout(src_addr_width=src_addr_width, dest_addr_width=dest_addr_width)
@@ -39,17 +42,16 @@ class TTA_Core(Elaboratable):
         self.instr_bus = Bus(self.instr_layout)
         self.data_bus = Bus(self.data_layout)
         self.synthesis = synthesis
-        if synthesis:
-            self.clk = Signal()
+        self.resources = resources
         # synthesis don't throw away my design pleaaaaase
-        self.result = Signal(data_width)
-        self.write_port = Record(
-            [
-                ("addr", ceil_log2(instr_memory_depth)),
-                ("en", 1),
-                ("data", self.instr_layout),
-            ]
-        )
+        # self.result = Signal(data_width)
+        # self.write_port = Record(
+        #     [
+        #         ("addr", ceil_log2(instr_memory_depth)),
+        #         ("en", 1),
+        #         ("data", self.instr_layout),
+        #     ]
+        # )
 
     def elaborate(self, platform):
         m = Module()
@@ -60,7 +62,7 @@ class TTA_Core(Elaboratable):
         m.domains.falling = cd_falling = ClockDomain(local=True, clk_edge="neg")
 
         if self.synthesis:
-            m.d.comb += cd_mem.clk.eq(self.clk)
+            m.d.comb += cd_mem.clk.eq(self.resources["clk25"].i)
 
         m.d.comb += [
             cd_falling.clk.eq(cd_rising.clk),
@@ -78,21 +80,23 @@ class TTA_Core(Elaboratable):
         instr_read_ports = [instr_mem.read_port(domain="mem") for _ in range(self.instr_memory_rports)]
 
         for fu in self.FUs:
+            sig = inspect.signature(fu[1].func)
+            parameters = {"instr_bus": self.instr_bus, "data_bus": self.data_bus}
+            if "instruction_memory_depth" in [name for (name, _) in sig.parameters.items()]:
+                parameters["instruction_memory_depth"] = self.instr_memory_depth
+            if "instruction_memory_read_ports" in [name for (name, _) in sig.parameters.items()]:
+                parameters["instruction_memory_read_ports"] = self.instr_memory_rports
+            if "resources" in [name for (name, _) in sig.parameters.items()]:
+                parameters["resources"] = self.resources
+
+            m.submodules[fu[0]] = fu[1](**parameters)
             if fu[0] == "Fetcher":
-                m.submodules[fu[0]] = fu[1](
-                    instr_bus=self.instr_bus,
-                    data_bus=self.data_bus,
-                    instruction_memory_depth=self.instr_memory_depth,
-                    instruction_memory_read_ports=self.instr_memory_rports,
-                )
                 for i, instr_read_port in enumerate(m.submodules[fu[0]].instr_read_ports):
                     m.d.comb += [
                         instr_read_ports[i].addr.eq(instr_read_port.addr),
                         instr_read_ports[i].en.eq(instr_read_port.en),
                         instr_read_port.data.eq(instr_read_ports[i].data),
                     ]
-            else:
-                m.submodules[fu[0]] = fu[1](instr_bus=self.instr_bus, data_bus=self.data_bus)
 
             setattr(self, fu[0], m.submodules[fu[0]])
 
@@ -109,11 +113,11 @@ class TTA_Core(Elaboratable):
         # DEBUG PURPOSES ONLY
         # result = platform.request("result")
         # write_port = platform.request("write_port")
-        m.d.comb += [
-            self.result.eq(m.submodules["Result"].inputs[0]["data"]),
-            instr_write_port.addr.eq(self.write_port.addr),
-            instr_write_port.en.eq(self.write_port.en),
-            instr_write_port.data.eq(self.write_port.data),
-        ]
+        # m.d.comb += [
+        #     self.result.eq(m.submodules["Result"].inputs[0]["data"]),
+        #     instr_write_port.addr.eq(self.write_port.addr),
+        #     instr_write_port.en.eq(self.write_port.en),
+        #     instr_write_port.data.eq(self.write_port.data),
+        # ]
 
         return m

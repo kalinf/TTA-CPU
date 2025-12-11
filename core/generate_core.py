@@ -51,7 +51,8 @@ def gen_core(directory: Path, instr_memory_init=[], synthesis=False):
         else:
             raise UnimplementedFU(f"No implementation file found for {name}.")
 
-    core = TTA_Core(
+    core = partial(
+        TTA_Core,
         src_addr_width=configuration["src_addr_width"],
         dest_addr_width=configuration["dest_addr_width"],
         data_width=configuration["word_size"],

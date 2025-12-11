@@ -5,11 +5,6 @@ from .bus import Bus
 __all__ = ["FU"]
 
 
-@final
-class IncorrectTriggerPosition(Exception):
-    """Exception raised when an incorrect trigger port position was entered."""
-
-
 class FU(Elaboratable):
     def __init__(
         self,
@@ -21,6 +16,7 @@ class FU(Elaboratable):
         input_address: int,
         output_address: int,
         inout_address: int,
+        resources={},
     ):
         self.instr_bus = instr_bus
         self.data_bus = data_bus

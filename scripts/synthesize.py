@@ -1,32 +1,39 @@
 import os
 import argparse
-from pathlib import Path
-from constants.ecp5_platform import Colorlight_i9_R72Platform
 from amaranth import *
+from pathlib import Path
 from core.generate_core import gen_core
+from constants.ecp5_platform import Colorlight_i9_R72Platform
+from core.utils.resources import create_resources, add_resources, get_requested_resources_names
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "basic_core").resolve()
 
 
 class Top(Elaboratable):
-    def __init__(self, core):
+    def __init__(self, core, resources):
         self.core = core
+        self.resources = resources
 
     def elaborate(self, platform):
         m = Module()
-        m.submodules.core = self.core
 
         clk25 = platform.request("clk25")
         result = platform.request("result")
         write_port = platform.request("write_port")
-        m.d.comb += [
-            self.core.clk.eq(clk25.i),
-            result.o.eq(self.core.result),
-            self.core.write_port.addr.eq(write_port.addr.i),
-            self.core.write_port.en.eq(write_port.en.i),
-            self.core.write_port.data.eq(write_port.data.i),
-        ]
+
+        resource_dict = {"clk25": clk25}
+        for resource in self.resources:
+            resource_dict[resource] = platform.request(resource)
+
+        m.submodules.core = core = self.core(resources=resource_dict)
+        # m.d.comb += [
+        #     core.clk.eq(clk25.i),
+        #     result.o.eq(core.result),
+        #     core.write_port.addr.eq(write_port.addr.i),
+        #     core.write_port.en.eq(write_port.en.i),
+        #     core.write_port.data.eq(write_port.data.i),
+        # ]
 
         return m
 
@@ -70,8 +77,10 @@ def main():
     if not dir_path.exists():
         raise FileNotFoundError(f"Invalid core directory path: {dir_path}")
 
-    core = Top(gen_core(dir_path, synthesis=True))
-    Colorlight_i9_R72Platform().build(core, do_program=args.flash)
+    platform = Colorlight_i9_R72Platform()
+    add_resources(platform, create_resources(dir_path))
+    core = Top(gen_core(dir_path, synthesis=True), resources=get_requested_resources_names(dir_path))
+    platform.build(core, do_program=args.flash)
 
 
 if __name__ == "__main__":

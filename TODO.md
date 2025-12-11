@@ -29,7 +29,7 @@
     - możliwość zapisywania pamięci bez konieczności resyntezowania rdzenia
 - Licencja i przeklejone notki licencyjne z miejsc skąd brałam kod (colorlight i9, coreblocks)
 - PLL żeby mieć faktycznie fajniejszą częstotliwość niż 12 MHz
-- Indirect unit 
+- ~~Indirect unit~~ 
 
 ## Nice to have
 - częściowo pipelined TTA
@@ -44,19 +44,24 @@
 - wiele możliwych szyn instrukcji (VLIV)
 
 
-co przed wtorkiem:
+co przed wtorkiem [hehe na pewno]:
 - ~~budowanie "assembly" nie z dut obiektu rdzenia a z obiektu stworzonego z pliku konfiguracyjnego (same adresy)~~
-- indirect unit
-- przykład lepszego fetchera dla fibonacciego i test lepszy fibonacciego
-- przygotowanie zestawienia, co robili inni (wielocyklowość, operowanie na pamięci)
+- ~~indirect unit~~
+- ~~przykład lepszego fetchera dla fibonacciego i test lepszy fibonacciego~~
+- ~~przygotowanie zestawienia, co robili inni (wielocyklowość, operowanie na pamięci)~~
 - pamięć programu
 - ~~żeby się i syntezowało i pytestowało~~
 - procedury obsługi przerwań i reakcja na zdarzenia zewnętrzne
 - uruchamianie różnych testów dla różnych rdzeni
+- ~~przekazywanie resources~~
+- "mockowanie" resources dla symulacji
+- ograniczanie zasobów przekazywanych do jednostek???
+- subsignals w resources config i piny io
+- pll
 
 co potem:
-- programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
-- częściowo pipelined
+- bootloader, programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
+- częściowo pipelined [NIE ZDĄŻĘ, ODPADA]
 - wiele możliwych szyn instrukcji (VLIV)
 - wiele możliwych szyn danych (przerwania między jednostkami)
 - komunikacja z komputerem
@@ -64,3 +69,4 @@ co potem:
 pytania
 - programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
 - czy regenerować pliki fu przy ponownym generowaniu rdzenia
+- co z pytest i testami dla konkretnych konfiguracji
