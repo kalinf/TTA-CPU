@@ -2,6 +2,7 @@ import pytest
 from pathlib import Path
 from core.generate_core import gen_core
 from tests.utils import build_addresses_core_model
+from tests.utils import mock_resources as _mock_resources
 
 CONFTEST_DIR = Path(__file__).resolve().parent
 DEFAULT_CORE_PATH = (CONFTEST_DIR / ".." / "examples" / "basic_core").resolve()
@@ -17,6 +18,19 @@ def pytest_addoption(parser):
     parser.addoption("--waveform", action="store_true", default=False, help="Generate waveforms while running tests.")
 
 
+def pytest_collection_modifyitems(config, items):
+    core_dir = Path(config.getoption("--core-directory")).resolve()
+
+    selected = []
+
+    for item in items:
+        path = Path(item.fspath).resolve()
+        if core_dir in path.parents:
+            selected.append(item)
+
+    items[:] = selected
+
+
 @pytest.fixture(scope="session")
 def dir_path(request):
     dir_path = Path(request.config.getoption("--core-directory")).resolve()
@@ -26,8 +40,13 @@ def dir_path(request):
 
 
 @pytest.fixture(scope="session")
-def core(dir_path):
-    dut = gen_core(dir_path)
+def mock_resources(dir_path):
+    return _mock_resources(dir_path / "config_detail.json")
+
+
+@pytest.fixture(scope="session")
+def core(dir_path, mock_resources):
+    dut = gen_core(dir_path, resources=mock_resources)
     return dut
 
 

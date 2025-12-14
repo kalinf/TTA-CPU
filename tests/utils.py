@@ -85,3 +85,21 @@ def build_addresses_core_model(config_detail_file: Path):
                 self.inouts = list(range(fu["inout_address"], fu["inout_address"] + fu["inouts"]))
 
     return CoreModel(configuration)
+
+
+def mock_resources(config_detail_file: Path):
+    with config_detail_file.open() as f:
+        configuration = json.load(f)
+
+    class ResourceModel:
+        def __init__(self, dir="i", length=1):
+            setattr(self, dir, Signal(length))
+
+    mock_rsrcs = {}
+    if "resources" in configuration:
+        for resource in configuration["resources"]:
+            mock_resources[resource["name"]] = ResourceModel(
+                dir=resource["pins"]["dir"], length=len(resource["pins"]["pins"].split())
+            )
+
+    return mock_rsrcs

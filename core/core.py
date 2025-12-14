@@ -30,7 +30,6 @@ class TTA_Core(Elaboratable):
         instr_memory_rports=1,
         instr_memory_init=[],
         resources={},
-        fu_resources={},
         synthesis=False,
     ):
         self.instr_layout = InstructionLayout(src_addr_width=src_addr_width, dest_addr_width=dest_addr_width)
