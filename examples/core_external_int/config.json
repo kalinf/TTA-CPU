@@ -30,15 +30,22 @@
         {
             "name": "Logical",
             "inputs": 3,
-            "outputs": 6,
+            "outputs": 8,
             "inouts": 0,
             "description": "Logical operations."
+        },
+        {
+            "name": "ConstantLoader",
+            "inputs": 2,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Loads constants wider than source addresses."
         },
         {
             "name": "Fetcher",
             "inputs": 4,
             "outputs": 2,
-            "inouts": 0,
+            "inouts": 1,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
             "resources": [
                 "button"
@@ -60,9 +67,9 @@
         },
         {
             "name": "Pins",
-            "inputs": 1,
+            "inputs": 0,
             "outputs": 1,
-            "inouts": 0,
+            "inouts": 1,
             "description": "External pins for input/output.",
             "resources": [
                 "button",

@@ -8,8 +8,20 @@ def fibonacci_no_loop(core, n: int):
         return init
     init += [{"constant": 1, "src_addr": 1, "dst_addr": core.Adder.inputs[1]}]
     for i in range(2, n):
-        init += [{"constant": 0, "src_addr": core.Adder.outputs[0], "dst_addr": core.Adder.inputs[(i % 2)]}]
-    init += [{"constant": 0, "src_addr": core.Adder.outputs[0], "dst_addr": core.Result.inputs[0]}]
+        init += [
+            {
+                "constant": 0,
+                "src_addr": core.Adder.outputs[0],
+                "dst_addr": core.Adder.inputs[(i % 2)],
+            }
+        ]
+    init += [
+        {
+            "constant": 0,
+            "src_addr": core.Adder.outputs[0],
+            "dst_addr": core.Result.inputs[0],
+        }
+    ]
     return init
 
 
@@ -20,36 +32,83 @@ def loop_direct(core):
             [
                 # turn jumping off
                 {"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]},
-                {"constant": 0, "src_addr": core.Adder.outputs[0], "dst_addr": core.Adder.inputs[0]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Adder.outputs[0],
+                    "dst_addr": core.Adder.inputs[0],
+                },
                 # jump to end if iterator >= n
-                {"constant": 1, "src_addr": ((1 << 0) | (1 << 2)), "dst_addr": core.Logical.inputs[2]},
-                {"constant": 0, "src_addr": core.Increaser.inouts[0], "dst_addr": core.Logical.inputs[1]},
-                {"constant": 1, "src_addr": "result", "dst_addr": core.Fetcher.inputs[1]},
-                {"constant": 0, "src_addr": core.Logical.outputs[5], "dst_addr": core.Fetcher.inputs[0]},
+                {
+                    "constant": 1,
+                    "src_addr": ((1 << 0) | (1 << 2)),
+                    "dst_addr": core.Logical.inputs[2],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Increaser.inouts[0],
+                    "dst_addr": core.Logical.inputs[1],
+                },
+                {
+                    "constant": 1,
+                    "src_addr": "result",
+                    "dst_addr": core.Fetcher.inputs[1],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Logical.outputs[5],
+                    "dst_addr": core.Fetcher.inputs[0],
+                },
                 #
-                {"constant": 0, "src_addr": core.Adder.outputs[0], "dst_addr": core.Adder.inputs[1]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Adder.outputs[0],
+                    "dst_addr": core.Adder.inputs[1],
+                },
                 # jump to beginning of the loop when iterator < n
-                {"constant": 1, "src_addr": (1 << 1), "dst_addr": core.Logical.inputs[2]},
-                {"constant": 0, "src_addr": core.Increaser.inouts[0], "dst_addr": core.Logical.inputs[1]},
+                {
+                    "constant": 1,
+                    "src_addr": (1 << 1),
+                    "dst_addr": core.Logical.inputs[2],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Increaser.inouts[0],
+                    "dst_addr": core.Logical.inputs[1],
+                },
                 {"constant": 1, "src_addr": "loop", "dst_addr": core.Fetcher.inputs[1]},
-                {"constant": 0, "src_addr": core.Logical.outputs[5], "dst_addr": core.Fetcher.inputs[0]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Logical.outputs[5],
+                    "dst_addr": core.Fetcher.inputs[0],
+                },
             ],
         )
     ]
 
 
-# this test is for basic_core2 configuration
 def indirect_extra_preparation(core):
     return [
         (
             "prepare_indirect",
             [
                 # setting looper
-                {"constant": 1, "src_addr": core.Adder.inputs[0], "dst_addr": core.Looper.inputs[0]},
-                {"constant": 1, "src_addr": core.Adder.inputs[1], "dst_addr": core.Looper.inputs[1]},
+                {
+                    "constant": 1,
+                    "src_addr": core.Adder.inputs[0],
+                    "dst_addr": core.Looper.inputs[0],
+                },
+                {
+                    "constant": 1,
+                    "src_addr": core.Adder.inputs[1],
+                    "dst_addr": core.Looper.inputs[1],
+                },
                 {"constant": 1, "src_addr": 1, "dst_addr": core.Looper.inputs[2]},
                 # masking comparator (jump to beginning of the loop when iterator < n)
-                {"constant": 1, "src_addr": (1 << 1), "dst_addr": core.Logical.inputs[2]},
+                {
+                    "constant": 1,
+                    "src_addr": (1 << 1),
+                    "dst_addr": core.Logical.inputs[2],
+                },
                 # setting jump address
                 {"constant": 1, "src_addr": "loop", "dst_addr": core.Fetcher.inputs[1]},
             ],
@@ -65,10 +124,26 @@ def loop_indirect(core):
                 # turn jumping off
                 {"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]},
                 # set indirect addresses for Adder inputs
-                {"constant": 0, "src_addr": core.Looper.outputs[0], "dst_addr": core.Fetcher.inputs[3]},
-                {"constant": 0, "src_addr": core.Adder.outputs[0], "dst_addr": core.Fetcher.outputs[1]},
-                {"constant": 0, "src_addr": core.Increaser.inouts[0], "dst_addr": core.Logical.inputs[1]},
-                {"constant": 0, "src_addr": core.Logical.outputs[5], "dst_addr": core.Fetcher.inputs[0]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Looper.outputs[0],
+                    "dst_addr": core.Fetcher.inputs[3],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Adder.outputs[0],
+                    "dst_addr": core.Fetcher.outputs[1],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Increaser.inouts[0],
+                    "dst_addr": core.Logical.inputs[1],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Logical.outputs[5],
+                    "dst_addr": core.Fetcher.inputs[0],
+                },
             ],
         )
     ]
@@ -89,10 +164,18 @@ def fibonacci_loop(core, n: int, loop, extra_preparation=[]):
                 {"constant": 1, "src_addr": n, "dst_addr": core.Logical.inputs[0]},
                 {"constant": 1, "src_addr": 0, "dst_addr": core.Logical.inputs[1]},
                 # masking < and > condition (not equal)
-                {"constant": 1, "src_addr": ((1 << 1) | (1 << 2)), "dst_addr": core.Logical.inputs[2]},
+                {
+                    "constant": 1,
+                    "src_addr": ((1 << 1) | (1 << 2)),
+                    "dst_addr": core.Logical.inputs[2],
+                },
                 # escaping to general case
                 {"constant": 1, "src_addr": "b1", "dst_addr": core.Fetcher.inputs[1]},
-                {"constant": 0, "src_addr": core.Logical.outputs[5], "dst_addr": core.Fetcher.inputs[0]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Logical.outputs[5],
+                    "dst_addr": core.Fetcher.inputs[0],
+                },
                 # edge case for n == 0
                 {"constant": 1, "src_addr": 0, "dst_addr": core.Result.inputs[0]},
                 # jump to end and lock
@@ -111,11 +194,27 @@ def fibonacci_loop(core, n: int, loop, extra_preparation=[]):
                 {"constant": 1, "src_addr": 0, "dst_addr": core.Adder.inputs[0]},
                 {"constant": 1, "src_addr": 1, "dst_addr": core.Adder.inputs[1]},
                 # masking == and > condition (grater then or equal)
-                {"constant": 1, "src_addr": ((1 << 0) | (1 << 2)), "dst_addr": core.Logical.inputs[2]},
+                {
+                    "constant": 1,
+                    "src_addr": ((1 << 0) | (1 << 2)),
+                    "dst_addr": core.Logical.inputs[2],
+                },
                 # check if n <= 2 (iterator)
-                {"constant": 0, "src_addr": core.Increaser.inouts[0], "dst_addr": core.Logical.inputs[1]},
-                {"constant": 1, "src_addr": "result", "dst_addr": core.Fetcher.inputs[1]},
-                {"constant": 0, "src_addr": core.Logical.outputs[5], "dst_addr": core.Fetcher.inputs[0]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Increaser.inouts[0],
+                    "dst_addr": core.Logical.inputs[1],
+                },
+                {
+                    "constant": 1,
+                    "src_addr": "result",
+                    "dst_addr": core.Fetcher.inputs[1],
+                },
+                {
+                    "constant": 0,
+                    "src_addr": core.Logical.outputs[5],
+                    "dst_addr": core.Fetcher.inputs[0],
+                },
             ],
         )
     ]
@@ -128,7 +227,11 @@ def fibonacci_loop(core, n: int, loop, extra_preparation=[]):
                 # turn jumping off
                 {"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]},
                 # put result in correct register
-                {"constant": 0, "src_addr": core.Adder.outputs[0], "dst_addr": core.Result.inputs[0]},
+                {
+                    "constant": 0,
+                    "src_addr": core.Adder.outputs[0],
+                    "dst_addr": core.Result.inputs[0],
+                },
                 # jump to end and lock
                 {"constant": 1, "src_addr": "end", "dst_addr": core.Fetcher.inputs[1]},
                 {"constant": 1, "src_addr": 1, "dst_addr": core.Fetcher.inputs[0]},

@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 from core.generate_core import gen_core
-from tests.utils import build_addresses_core_model
+from utils.utils import build_addresses_core_model
 from tests.utils import mock_resources as _mock_resources
 
 CONFTEST_DIR = Path(__file__).resolve().parent

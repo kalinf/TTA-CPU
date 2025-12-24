@@ -3,16 +3,18 @@ from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
-class Regs(FU):   
+
+class Regs(FU):
     """
     General purpose registers.
-     
+
     Communication ports:
     ----------
-    0 Inputs: 
-    0 Outputs: 
-    2 Inouts: 
+    0 Inputs:
+    0 Outputs:
+    2 Inouts:
     """
+
     def __init__(
         self,
         instr_bus: Bus,
@@ -34,16 +36,16 @@ class Regs(FU):
             inout_address=inout_address,
             output_address=output_address,
         )
-        
-    
+
     def elaborate(self, platform):
         m = super().elaborate(platform)
-        
-        # here you can react on writes into trigger addresses 
+
+        # here you can react on writes into trigger addresses
         # here place your code, for example:
         # with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
         #   m.d.falling += ...
 
         return m
+
 
 register_fu("Regs", Regs)

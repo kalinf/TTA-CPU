@@ -48,7 +48,13 @@ class Looper(FU):
         fresh_data = Signal.like(self.data_bus.data.data, name="fresh_data")
         next_value = Signal.like(self.data_bus.data.data, name="next_value")
         m.d.comb += [
-            fresh_data.eq(Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)),
+            fresh_data.eq(
+                Mux(
+                    ~self.instr_bus.data.constant,
+                    self.data_bus.data.data,
+                    self.instr_bus.data.src_addr,
+                )
+            ),
             next_value.eq(self.outputs[0]["data"] + self.inputs[2]["data"]),
         ]
 
@@ -57,7 +63,11 @@ class Looper(FU):
 
         with m.If((self.instr_bus.data.src_addr == self.outputs[0]["addr"]) & ~self.instr_bus.data.constant):
             m.d.falling += self.outputs[0]["data"].eq(
-                Mux(next_value <= self.inputs[1]["data"], next_value, self.inputs[0]["data"])
+                Mux(
+                    next_value <= self.inputs[1]["data"],
+                    next_value,
+                    self.inputs[0]["data"],
+                )
             )
 
         return m

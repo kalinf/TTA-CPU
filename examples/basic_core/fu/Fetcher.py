@@ -58,7 +58,11 @@ class Fetcher(FU):
         # Common part
         fresh_data = Signal.like(self.data_bus.data.data, name="fresh_data")
         m.d.comb += fresh_data.eq(
-            Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
+            Mux(
+                ~self.instr_bus.data.constant,
+                self.data_bus.data.data,
+                self.instr_bus.data.src_addr,
+            )
         )
 
         # Fetcher part

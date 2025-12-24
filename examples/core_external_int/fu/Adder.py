@@ -3,16 +3,18 @@ from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
-class Adder(FU):   
+
+class Adder(FU):
     """
     Adds the operands.
-     
+
     Communication ports:
     ----------
-    2 Inputs: 
-    1 Outputs: 
-    0 Inouts: 
+    2 Inputs:
+    1 Outputs:
+    0 Inouts:
     """
+
     def __init__(
         self,
         instr_bus: Bus,
@@ -34,16 +36,35 @@ class Adder(FU):
             inout_address=inout_address,
             output_address=output_address,
         )
-        
-    
+
     def elaborate(self, platform):
         m = super().elaborate(platform)
-        
-        # here you can react on writes into trigger addresses 
+
+        # here you can react on writes into trigger addresses
         # here place your code, for example:
-        # with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
-        #   m.d.falling += ...
+        with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
+            # to get the operation result at the moment of writing data into register
+            # we do combinational operation using value from data_bus
+            m.d.falling += self.outputs[0]["data"].eq(
+                Mux(
+                    ~self.instr_bus.data.constant,
+                    self.data_bus.data.data,
+                    self.instr_bus.data.src_addr,
+                )
+                + self.inputs[1]["data"]
+            )
+
+        with m.If(self.instr_bus.data.dst_addr == self.inputs[1]["addr"]):
+            m.d.falling += self.outputs[0]["data"].eq(
+                Mux(
+                    ~self.instr_bus.data.constant,
+                    self.data_bus.data.data,
+                    self.instr_bus.data.src_addr,
+                )
+                + self.inputs[0]["data"]
+            )
 
         return m
+
 
 register_fu("Adder", Adder)

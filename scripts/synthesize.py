@@ -1,10 +1,12 @@
 import os
 import argparse
+import importlib
 from amaranth import *
 from pathlib import Path
 from core.generate_core import gen_core
 from constants.ecp5_platform import Colorlight_i9_R72Platform
 from core.utils.resources import create_resources, add_resources, get_requested_resources_names
+from scripts.translator import json2python
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "basic_core").resolve()
@@ -19,21 +21,14 @@ class Top(Elaboratable):
         m = Module()
 
         clk25 = platform.request("clk25")
-        result = platform.request("result")
-        write_port = platform.request("write_port")
 
         resource_dict = {"clk25": clk25}
         for resource in self.resources:
+            print(resource)
             resource_dict[resource] = platform.request(resource)
+            print(resource_dict[resource])
 
         m.submodules.core = core = self.core(resources=resource_dict)
-        # m.d.comb += [
-        #     core.clk.eq(clk25.i),
-        #     result.o.eq(core.result),
-        #     core.write_port.addr.eq(write_port.addr.i),
-        #     core.write_port.en.eq(write_port.en.i),
-        #     core.write_port.data.eq(write_port.data.i),
-        # ]
 
         return m
 
@@ -69,6 +64,12 @@ def main():
         help="Enables flashing device after synthesis. Default: %(default)s",
     )
 
+    parser.add_argument(
+        "--init-instr-memory",
+        default="",
+        help="Provide json file containing initial values for instruction memory. Default: empty",
+    )
+
     args = parser.parse_args()
 
     os.environ["AMARANTH_verbose"] = "true" if args.verbose else "false"
@@ -77,9 +78,14 @@ def main():
     if not dir_path.exists():
         raise FileNotFoundError(f"Invalid core directory path: {dir_path}")
 
+    instr_memory_init = json2python(Path(args.init_instr_memory).resolve()) if args.init_instr_memory != "" else []
     platform = Colorlight_i9_R72Platform()
     add_resources(platform, create_resources(dir_path))
-    core = Top(gen_core(dir_path, synthesis=True), resources=get_requested_resources_names(dir_path))
+    print(platform.resources)
+    core = Top(
+        gen_core(dir_path, instr_memory_init=instr_memory_init, synthesis=True),
+        resources=get_requested_resources_names(dir_path),
+    )
     platform.build(core, do_program=args.flash)
 
 

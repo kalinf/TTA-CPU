@@ -11,8 +11,8 @@
             "inouts": 0,
             "description": "Adds the operands.",
             "input_address": 1,
-            "inout_address": 15,
-            "output_address": 19
+            "inout_address": 16,
+            "output_address": 22
         },
         {
             "name": "Increaser",
@@ -21,8 +21,8 @@
             "inouts": 2,
             "description": "Increments the main value by another value during each readout.",
             "input_address": 3,
-            "inout_address": 15,
-            "output_address": 20
+            "inout_address": 16,
+            "output_address": 23
         },
         {
             "name": "Looper",
@@ -31,31 +31,41 @@
             "inouts": 0,
             "description": "Loops through a range of numbers.",
             "input_address": 3,
-            "inout_address": 17,
-            "output_address": 20
+            "inout_address": 18,
+            "output_address": 23
         },
         {
             "name": "Logical",
             "inputs": 3,
-            "outputs": 6,
+            "outputs": 8,
             "inouts": 0,
             "description": "Logical operations.",
             "input_address": 6,
-            "inout_address": 17,
-            "output_address": 21
+            "inout_address": 18,
+            "output_address": 24
+        },
+        {
+            "name": "ConstantLoader",
+            "inputs": 2,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Loads constants wider than source addresses.",
+            "input_address": 9,
+            "inout_address": 18,
+            "output_address": 32
         },
         {
             "name": "Fetcher",
             "inputs": 4,
             "outputs": 2,
-            "inouts": 0,
+            "inouts": 1,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
             "resources": [
                 "button"
             ],
-            "input_address": 9,
-            "inout_address": 17,
-            "output_address": 27
+            "input_address": 11,
+            "inout_address": 18,
+            "output_address": 33
         },
         {
             "name": "Regs",
@@ -63,9 +73,9 @@
             "outputs": 0,
             "inouts": 2,
             "description": "General purpose registers.",
-            "input_address": 13,
-            "inout_address": 17,
-            "output_address": 29
+            "input_address": 15,
+            "inout_address": 19,
+            "output_address": 35
         },
         {
             "name": "Result",
@@ -73,23 +83,23 @@
             "outputs": 0,
             "inouts": 0,
             "description": "Result register for debug purpose.",
-            "input_address": 13,
-            "inout_address": 19,
-            "output_address": 29
+            "input_address": 15,
+            "inout_address": 21,
+            "output_address": 35
         },
         {
             "name": "Pins",
-            "inputs": 1,
+            "inputs": 0,
             "outputs": 1,
-            "inouts": 0,
+            "inouts": 1,
             "description": "External pins for input/output.",
             "resources": [
                 "button",
                 "leds"
             ],
-            "input_address": 14,
-            "inout_address": 19,
-            "output_address": 29
+            "input_address": 16,
+            "inout_address": 21,
+            "output_address": 35
         }
     ],
     "resources": [

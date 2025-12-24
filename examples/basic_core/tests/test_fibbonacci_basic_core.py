@@ -1,8 +1,12 @@
 import pytest
 from amaranth import *
 from amaranth.sim import Simulator
-from tests.utils import base_asm_test, resolve_bb_labels
-from examples.basic_core.tests.asm.fibonacci import fibonacci_no_loop, fibonacci_loop_direct
+from tests.utils import base_asm_test
+from utils.utils import resolve_bb_labels
+from examples.basic_core.tests.asm.fibonacci import (
+    fibonacci_no_loop,
+    fibonacci_loop_direct,
+)
 from core.generate_core import gen_core
 
 
@@ -27,11 +31,17 @@ def fib(n):
 
 async def sim_fib(ctx, dut, n):
     await ctx.tick(domain="falling")
-    ctx.set(dut.instr_bus.data, {"constant": 1, "src_addr": 0, "dst_addr": dut.Adder.inputs[0]["addr"]})
+    ctx.set(
+        dut.instr_bus.data,
+        {"constant": 1, "src_addr": 0, "dst_addr": dut.Adder.inputs[0]["addr"]},
+    )
     await ctx.tick(domain="falling")
     if n == 0:
         return ctx.get(dut.Adder.outputs[0]["data"])
-    ctx.set(dut.instr_bus.data, {"constant": 1, "src_addr": 1, "dst_addr": dut.Adder.inputs[1]["addr"]})
+    ctx.set(
+        dut.instr_bus.data,
+        {"constant": 1, "src_addr": 1, "dst_addr": dut.Adder.inputs[1]["addr"]},
+    )
     if n == 1:
         await ctx.tick(domain="falling")
         return ctx.get(dut.Adder.outputs[0]["data"])
@@ -39,7 +49,11 @@ async def sim_fib(ctx, dut, n):
         await ctx.tick(domain="falling")
         ctx.set(
             dut.instr_bus.data,
-            {"constant": 0, "src_addr": dut.Adder.outputs[0]["addr"], "dst_addr": dut.Adder.inputs[(i % 2)]["addr"]},
+            {
+                "constant": 0,
+                "src_addr": dut.Adder.outputs[0]["addr"],
+                "dst_addr": dut.Adder.inputs[(i % 2)]["addr"],
+            },
         )
     await ctx.tick(domain="rising")
     return ctx.get(dut.data_bus.data.data)

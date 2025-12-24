@@ -51,13 +51,20 @@ co przed wtorkiem [hehe na pewno]:
 - ~~przygotowanie zestawienia, co robili inni (wielocyklowość, operowanie na pamięci)~~
 - pamięć programu
 - ~~żeby się i syntezowało i pytestowało~~
-- procedury obsługi przerwań i reakcja na zdarzenia zewnętrzne
-- uruchamianie różnych testów dla różnych rdzeni
+- ~~procedury obsługi przerwań i reakcja na zdarzenia zewnętrzne~~
+- obsługa wielu przerwań
+- stos i obsługa zapisania stanu przy wejściu do handlera przerwań
+- ~~uruchamianie różnych testów dla różnych rdzeni~~
 - ~~przekazywanie resources~~
-- "mockowanie" resources dla symulacji
+- ~~"mockowanie" resources dla symulacji~~
 - ograniczanie zasobów przekazywanych do jednostek???
 - subsignals w resources config i piny io
 - pll
+- pythonowy pseudo-assembler <--> json <--> plik binarny
+- osobne miejsce na ip cores niebędące fu
+- synchronizować domyślnie inputy??? jeżeli, to wypadałoby W JEDNYM MIEJSCU a nie w każdym fu
+- popraw skrypt formatujący
+- usunąć init z base_asm_test
 
 co potem:
 - bootloader, programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
@@ -69,4 +76,4 @@ co potem:
 pytania
 - programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
 - czy regenerować pliki fu przy ponownym generowaniu rdzenia
-- co z pytest i testami dla konkretnych konfiguracji
+- ~~co z pytest i testami dla konkretnych konfiguracji~~

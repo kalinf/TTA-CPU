@@ -42,15 +42,6 @@ class TTA_Core(Elaboratable):
         self.data_bus = Bus(self.data_layout)
         self.synthesis = synthesis
         self.resources = resources
-        # synthesis don't throw away my design pleaaaaase
-        # self.result = Signal(data_width)
-        # self.write_port = Record(
-        #     [
-        #         ("addr", ceil_log2(instr_memory_depth)),
-        #         ("en", 1),
-        #         ("data", self.instr_layout),
-        #     ]
-        # )
 
     def elaborate(self, platform):
         m = Module()
@@ -108,15 +99,7 @@ class TTA_Core(Elaboratable):
                     for inout in m.submodules[fu[0]].inouts:
                         with m.Case(inout["addr"]):
                             m.d.rising += self.data_bus.data.data.eq(inout["data"])
-
-        # DEBUG PURPOSES ONLY
-        # result = platform.request("result")
-        # write_port = platform.request("write_port")
-        # m.d.comb += [
-        #     self.result.eq(m.submodules["Result"].inputs[0]["data"]),
-        #     instr_write_port.addr.eq(self.write_port.addr),
-        #     instr_write_port.en.eq(self.write_port.en),
-        #     instr_write_port.data.eq(self.write_port.data),
-        # ]
+        with m.Else():
+            m.d.rising += self.data_bus.data.data.eq(self.instr_bus.data.src_addr)
 
         return m

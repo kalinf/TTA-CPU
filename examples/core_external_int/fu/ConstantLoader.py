@@ -3,20 +3,19 @@ from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
-
-class Increaser(FU):
+class ConstantLoader(FU):   
     """
-    Increments the main value by another value during each readout.
-
+    Loads constants wider than source addresses.
+     
     Communication ports:
     ----------
-    0 Inputs:
-    0 Outputs:
-    2 Inouts:
-        - 0: main value
-        - 1: increment value
+    2 Inputs: 
+        0: lower bits of constant ([len(src_addr)-1:0])
+        1: higher bits of constant  ([word_size-1:len(src_addr)])
+    1 Outputs: 
+        0: concatenated input values
+    0 Inouts: 
     """
-
     def __init__(
         self,
         instr_bus: Bus,
@@ -38,21 +37,20 @@ class Increaser(FU):
             inout_address=inout_address,
             output_address=output_address,
         )
-
+        
+    
     def elaborate(self, platform):
         m = super().elaborate(platform)
-
-        # here you can react on writes into trigger addresses
+        
+        # here you can react on writes into trigger addresses 
         # here place your code, for example:
-        with m.If(
-            (self.instr_bus.data.src_addr == self.inouts[0]["addr"])
-            & ~self.instr_bus.data.constant
-        ):
-            m.d.falling += self.inouts[0]["data"].eq(
-                self.inouts[0]["data"] + self.inouts[1]["data"]
-            )
+        # with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
+        #   m.d.falling += ...
+        m.d.comb += self.outputs[0]["data"].eq(Cat(
+            self.inputs[0]["data"][0:len(self.instr_bus.data.src_addr)],
+            self.inputs[1]["data"][0:(len(self.data_bus.data.data) - len(self.instr_bus.data.src_addr))]
+        ))
 
         return m
 
-
-register_fu("Increaser", Increaser)
+register_fu("ConstantLoader", ConstantLoader)
