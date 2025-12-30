@@ -64,6 +64,69 @@ class UARTTranceiver(Elaboratable):
                         m.d.sync += self.tx_done.eq(1)
                 m.d.comb += self.tx.eq(1)
 
+        rx_samples_counter = Signal(range(self.oversampling))
+        rx_sample_cycles_counter = Signal(range(self.sampling_period))
+        rx_bit_counter = Signal(range(self.data_bits))
+        rx_stop = Signal()
+
         # Receiver
+        with m.FSM(domain="sync"):
+            with m.State("IDLE"):
+                m.d.sync += self.rx_ready.eq(0)
+                with m.If(~self.rx):
+                    m.d.sync += [
+                        rx_samples_counter.eq(0),
+                        rx_sample_cycles_counter.eq(0),
+                        rx_bit_counter.eq(0),
+                    ]
+                    m.next = "START"
+            with m.State("START"):
+                m.d.sync += rx_sample_cycles_counter.eq(rx_sample_cycles_counter + 1)
+                with m.If(rx_sample_cycles_counter == self.sampling_period - 1):
+                    m.d.sync += [
+                        rx_samples_counter.eq(rx_samples_counter + 1),
+                        rx_sample_cycles_counter.eq(0),
+                    ]
+                    with m.If(rx_samples_counter == self.oversampling - 1):
+                        m.d.sync += (rx_samples_counter.eq(0),)
+                        m.next = "DATA"
+            with m.State("DATA"):
+                m.d.sync += rx_sample_cycles_counter.eq(rx_sample_cycles_counter + 1)
+                with m.If(rx_sample_cycles_counter == self.sampling_period - 1):
+                    m.d.sync += [
+                        rx_samples_counter.eq(rx_samples_counter + 1),
+                        rx_sample_cycles_counter.eq(0),
+                    ]
+                    with m.If(rx_samples_counter == self.oversampling // 2):
+                        m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:], self.rx))
+                    with m.If(rx_samples_counter == self.oversampling - 1):
+                        m.d.sync += [
+                            rx_samples_counter.eq(0),
+                            rx_bit_counter.eq(rx_bit_counter + 1),
+                        ]
+                        with m.If(rx_bit_counter == self.data_bits - 1):
+                            m.d.sync += [rx_bit_counter.eq(0), rx_stop.eq(1)]
+                            m.next = "STOP"
+            with m.State("STOP"):
+                m.d.sync += rx_sample_cycles_counter.eq(rx_sample_cycles_counter + 1)
+                with m.If(rx_sample_cycles_counter == self.sampling_period - 1):
+                    m.d.sync += [
+                        rx_samples_counter.eq(rx_samples_counter + 1),
+                        rx_sample_cycles_counter.eq(0),
+                    ]
+                    with m.If(rx_samples_counter == self.oversampling // 2):
+                        with m.If(~self.rx):
+                            m.d.sync += rx_stop.eq(0)
+                    with m.If(rx_samples_counter == self.oversampling - 1):
+                        m.d.sync += [
+                            rx_samples_counter.eq(0),
+                            rx_bit_counter.eq(rx_bit_counter + 1),
+                        ]
+                        with m.If(rx_bit_counter == self.stop_bits - 1):
+                            m.d.sync += [
+                                rx_bit_counter.eq(0),
+                                self.rx_ready.eq(rx_stop),
+                            ]
+                            m.next = "IDLE"
 
         return m
