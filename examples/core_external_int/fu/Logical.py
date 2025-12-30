@@ -86,7 +86,7 @@ class Logical(FU):
                     compared.all(),
                     compared.any(),
                     compared.xor(),
-                    ~((compared & base).any()), # bardzo sus rozszerzalne bitowo
+                    ~((compared & base).any()),  # bardzo sus rozszerzalne bitowo
                 )
             ),
             self.outputs[5]["data"].eq(self.outputs[4]["data"] & mask),

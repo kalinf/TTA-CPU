@@ -3,19 +3,21 @@ from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
-class ConstantLoader(FU):   
+
+class ConstantLoader(FU):
     """
     Loads constants wider than source addresses.
-     
+
     Communication ports:
     ----------
-    2 Inputs: 
+    2 Inputs:
         0: lower bits of constant ([len(src_addr)-1:0])
         1: higher bits of constant  ([word_size-1:len(src_addr)])
-    1 Outputs: 
+    1 Outputs:
         0: concatenated input values
-    0 Inouts: 
+    0 Inouts:
     """
+
     def __init__(
         self,
         instr_bus: Bus,
@@ -37,20 +39,26 @@ class ConstantLoader(FU):
             inout_address=inout_address,
             output_address=output_address,
         )
-        
-    
+
     def elaborate(self, platform):
         m = super().elaborate(platform)
-        
-        # here you can react on writes into trigger addresses 
+
+        # here you can react on writes into trigger addresses
         # here place your code, for example:
         # with m.If(self.instr_bus.data.dst_addr == self.inputs[0]["addr"]):
         #   m.d.falling += ...
-        m.d.comb += self.outputs[0]["data"].eq(Cat(
-            self.inputs[0]["data"][0:len(self.instr_bus.data.src_addr)],
-            self.inputs[1]["data"][0:(len(self.data_bus.data.data) - len(self.instr_bus.data.src_addr))]
-        ))
+        m.d.comb += self.outputs[0]["data"].eq(
+            Cat(
+                self.inputs[0]["data"][0 : len(self.instr_bus.data.src_addr)],
+                self.inputs[1]["data"][
+                    0 : (
+                        len(self.data_bus.data.data) - len(self.instr_bus.data.src_addr)
+                    )
+                ],
+            )
+        )
 
         return m
+
 
 register_fu("ConstantLoader", ConstantLoader)
