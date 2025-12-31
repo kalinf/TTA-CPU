@@ -1,4 +1,5 @@
 from amaranth import *
+from core.registry import register_ip
 
 
 class UARTTranceiver(Elaboratable):
@@ -23,7 +24,7 @@ class UARTTranceiver(Elaboratable):
         self.rx = Signal()
         self.tx_data = Signal(self.data_bits)
         self.tx_start = Signal()
-        self.tx_done = Signal(reset=1)
+        self.tx_done = Signal()
         self.rx_data = Signal(self.data_bits)
         self.rx_ready = Signal()
 
@@ -34,7 +35,7 @@ class UARTTranceiver(Elaboratable):
         tx_counter = Signal(range(self.data_bits))
 
         # Transmitter
-        with m.FSM(domain="sync"):
+        with m.FSM(domain="sync", name="uart_transmitter"):
             with m.State("IDLE"):
                 m.d.comb += self.tx.eq(1)
                 m.d.sync += self.tx_done.eq(0)
@@ -70,7 +71,7 @@ class UARTTranceiver(Elaboratable):
         rx_stop = Signal()
 
         # Receiver
-        with m.FSM(domain="sync"):
+        with m.FSM(domain="sync", name="uart_receiver"):
             with m.State("IDLE"):
                 m.d.sync += self.rx_ready.eq(0)
                 with m.If(~self.rx):
@@ -130,3 +131,6 @@ class UARTTranceiver(Elaboratable):
                             m.next = "IDLE"
 
         return m
+
+
+register_ip("UARTTranceiver", UARTTranceiver)

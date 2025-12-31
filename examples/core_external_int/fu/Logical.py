@@ -28,6 +28,7 @@ class Logical(FU):
             - bit 4: reduction OR on compared
             - bit 5: reduction XOR on compared
             - bit 6: reduction OR on (base NAND compared)
+            - bit 7: reduction NOR on compared
         - 5: masked output 4
         - 6: compared >> base
         - 7: compared << base
@@ -87,6 +88,7 @@ class Logical(FU):
                     compared.any(),
                     compared.xor(),
                     ~((compared & base).any()),  # bardzo sus rozszerzalne bitowo
+                    ~(compared.any()),
                 )
             ),
             self.outputs[5]["data"].eq(self.outputs[4]["data"] & mask),

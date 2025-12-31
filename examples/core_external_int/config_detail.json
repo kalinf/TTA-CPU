@@ -11,8 +11,8 @@
             "inouts": 0,
             "description": "Adds the operands.",
             "input_address": 1,
-            "inout_address": 16,
-            "output_address": 22
+            "inout_address": 17,
+            "output_address": 23
         },
         {
             "name": "Increaser",
@@ -21,8 +21,8 @@
             "inouts": 2,
             "description": "Increments the main value by another value during each readout.",
             "input_address": 3,
-            "inout_address": 16,
-            "output_address": 23
+            "inout_address": 17,
+            "output_address": 24
         },
         {
             "name": "Looper",
@@ -31,8 +31,8 @@
             "inouts": 0,
             "description": "Loops through a range of numbers.",
             "input_address": 3,
-            "inout_address": 18,
-            "output_address": 23
+            "inout_address": 19,
+            "output_address": 24
         },
         {
             "name": "Logical",
@@ -41,8 +41,8 @@
             "inouts": 0,
             "description": "Logical operations.",
             "input_address": 6,
-            "inout_address": 18,
-            "output_address": 24
+            "inout_address": 19,
+            "output_address": 25
         },
         {
             "name": "ConstantLoader",
@@ -51,8 +51,8 @@
             "inouts": 0,
             "description": "Loads constants wider than source addresses.",
             "input_address": 9,
-            "inout_address": 18,
-            "output_address": 32
+            "inout_address": 19,
+            "output_address": 33
         },
         {
             "name": "Fetcher",
@@ -64,8 +64,22 @@
                 "button"
             ],
             "input_address": 11,
-            "inout_address": 18,
-            "output_address": 33
+            "inout_address": 19,
+            "output_address": 34
+        },
+        {
+            "name": "UART",
+            "inputs": 1,
+            "outputs": 3,
+            "inouts": 0,
+            "description": "UART Transmitter Receiver.",
+            "resources": [
+                "uart_tx",
+                "uart_rx"
+            ],
+            "input_address": 15,
+            "inout_address": 20,
+            "output_address": 36
         },
         {
             "name": "Regs",
@@ -73,9 +87,9 @@
             "outputs": 0,
             "inouts": 2,
             "description": "General purpose registers.",
-            "input_address": 15,
-            "inout_address": 19,
-            "output_address": 35
+            "input_address": 16,
+            "inout_address": 20,
+            "output_address": 39
         },
         {
             "name": "Result",
@@ -83,9 +97,9 @@
             "outputs": 0,
             "inouts": 0,
             "description": "Result register for debug purpose.",
-            "input_address": 15,
-            "inout_address": 21,
-            "output_address": 35
+            "input_address": 16,
+            "inout_address": 22,
+            "output_address": 39
         },
         {
             "name": "Pins",
@@ -97,9 +111,9 @@
                 "button",
                 "leds"
             ],
-            "input_address": 16,
-            "inout_address": 21,
-            "output_address": 35
+            "input_address": 17,
+            "inout_address": 22,
+            "output_address": 39
         }
     ],
     "resources": [
@@ -121,6 +135,28 @@
                 "pins": "E1 E4 F3 H3 H5 J5 A2 K4",
                 "dir": "o",
                 "invert": true
+            },
+            "attrs": {
+                "IO_TYPE": "LVCMOS33"
+            }
+        },
+        {
+            "name": "uart_tx",
+            "number": 0,
+            "pins": {
+                "pins": "J17",
+                "dir": "o"
+            },
+            "attrs": {
+                "IO_TYPE": "LVCMOS33"
+            }
+        },
+        {
+            "name": "uart_rx",
+            "number": 0,
+            "pins": {
+                "pins": "H18",
+                "dir": "i"
             },
             "attrs": {
                 "IO_TYPE": "LVCMOS33"

@@ -20,11 +20,21 @@ def load_all_fu_classes(fu_dir: Path):
         spec.loader.exec_module(module)
 
 
+def load_all_ip_classes(ip_dir: Path):
+    for f in ip_dir.glob("*.py"):
+        spec = importlib.util.spec_from_file_location(f.stem, f)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+
 def gen_core(directory: Path, instr_memory_init=[], synthesis=False, resources=None):
     target_dir = directory.resolve()
     fu_dir = target_dir / "fu"
+    ip_dir = target_dir / "ip"
     config_path = target_dir / "config_detail.json"
 
+    if ip_dir.exists():
+        load_all_ip_classes(ip_dir)
     load_all_fu_classes(fu_dir)
 
     with config_path.open() as f:

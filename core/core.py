@@ -46,13 +46,14 @@ class TTA_Core(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
+        m.domains.sync = cd_sync = ClockDomain(local=True)
         m.domains.mem = cd_mem = ClockDomain(local=True)
         m.domains.neg_mem = cd_neg_mem = ClockDomain(local=True, clk_edge="neg")
         m.domains.rising = cd_rising = ClockDomain(local=True)
         m.domains.falling = cd_falling = ClockDomain(local=True, clk_edge="neg")
 
         if self.synthesis:
-            m.d.comb += cd_mem.clk.eq(self.resources["clk25"].i)
+            m.d.comb += [cd_mem.clk.eq(self.resources["clk25"].i), cd_sync.clk.eq(self.resources["clk25"].i)]
 
         m.d.comb += [
             cd_falling.clk.eq(cd_rising.clk),

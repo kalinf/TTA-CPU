@@ -5,6 +5,13 @@ Transport Triggered Architecture cores generator
 Based on config_file (default config.json) file it produces directory `fu` with files `FUname.py` (where FUName corresponds to `name` field of fu in configuration file). 
 It also produces a `config_detail.json` which contains detailed core configuration with fu's addresses and instruction elements length computed.
 
+IP Cores (not being Functional Units) implementations can be placed in directory `ip` in the same superdirectory as `fu`. The implemented module has to be registered in
+`IP_REGISTRY` what can be done by calling `core.registry.register_ip(IP_CORE)` below the class implementation. Registered IP Cores are loaded while main core generation.
+Functional Units can instantiate IP Cores by calling `core.registry.IP_REGISTRY["IP_Core_name"]`.
+Example of usage:
+    - [IP Core implementation](examples/core_external_int/ip/uart.py)
+    - [IP Core instantiation](examples/core_external_int/fu/UART.py)
+
 `python3 synthesize.py` synthesizes core with configuration provided with `-d` flag followed by the path to directory containing functional units implementations.
 Detailed information about script usage can be got by running it with `-h` flag.
 
@@ -17,3 +24,10 @@ Phase between `rising`/`falling` clock and `mem` clock is shown at the figure be
 ![clocks](utils/img/clocks.png)
 
 To access instruction memory, the unit called `Fetcher` has to be defined. It can operate on memory using ports `instr_read_ports[0:instruction_memory_read_ports-1]` already defined in the generated file (`instruction_memory_read_ports` is defined in config file by user).
+
+To insert firmware into core it first must be translated to json format. Translation can be achieved using `translator.py` script.
+Example usage:
+`PYTHONPATH=. python3 scripts/translator.py -m "python2json" -d "examples/core_external_int/" -p "examples/core_external_int/tests/asm/handlers.py" -f "wandering_led"`
+Program in json format can be passed as an argument to the script `synthesize.py`.
+Example usage:
+`PYTHONPATH=. python3 scripts/synthesize.py --config-directory="examples/core_external_int/" -v --init-instr-memory="examples/core_external_int/program.json" -f`

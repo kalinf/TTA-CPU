@@ -52,6 +52,17 @@
             ]
         },
         {
+            "name": "UART",
+            "inputs": 1,
+            "outputs": 3,
+            "inouts": 0,
+            "description": "UART Transmitter Receiver.",
+            "resources": [
+                "uart_tx",
+                "uart_rx"
+            ]
+        },
+        {
             "name": "Regs",
             "inputs": 0,
             "outputs": 0,
@@ -96,6 +107,28 @@
                 "pins": "E1 E4 F3 H3 H5 J5 A2 K4",
                 "dir": "o",
                 "invert": true
+            },
+            "attrs": {
+                "IO_TYPE": "LVCMOS33"
+            }
+        },
+        {
+            "name": "uart_tx",
+            "number": 0,
+            "pins": {
+                "pins": "J17",
+                "dir": "o"
+            },
+            "attrs": {
+                "IO_TYPE": "LVCMOS33"
+            }
+        },
+        {
+            "name": "uart_rx",
+            "number": 0,
+            "pins": {
+                "pins": "H18",
+                "dir": "i"
             },
             "attrs": {
                 "IO_TYPE": "LVCMOS33"

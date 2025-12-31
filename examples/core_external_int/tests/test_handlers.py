@@ -1,7 +1,6 @@
 import pytest
 from amaranth import *
 from amaranth.sim import Simulator
-from tests.utils import base_asm_test
 from utils.utils import resolve_bb_labels
 from examples.core_external_int.tests.asm.handlers import wandering_led
 from core.generate_core import gen_core

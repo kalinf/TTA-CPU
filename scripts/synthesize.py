@@ -24,9 +24,7 @@ class Top(Elaboratable):
 
         resource_dict = {"clk25": clk25}
         for resource in self.resources:
-            print(resource)
             resource_dict[resource] = platform.request(resource)
-            print(resource_dict[resource])
 
         m.submodules.core = core = self.core(resources=resource_dict)
 
@@ -81,7 +79,6 @@ def main():
     instr_memory_init = json2python(Path(args.init_instr_memory).resolve()) if args.init_instr_memory != "" else []
     platform = Colorlight_i9_R72Platform()
     add_resources(platform, create_resources(dir_path))
-    print(platform.resources)
     core = Top(
         gen_core(dir_path, instr_memory_init=instr_memory_init, synthesis=True),
         resources=get_requested_resources_names(dir_path),

@@ -94,7 +94,11 @@ class Fetcher(FU):
             jump_condition.eq(
                 Mux(
                     self.instr_bus.data.dst_addr == self.inputs[0]["addr"],
-                    self.data_bus.data.data,
+                    Mux(
+                        ~self.instr_bus.data.constant,
+                        self.data_bus.data.data,
+                        self.instr_bus.data.src_addr,
+                    ),
                     self.inputs[0]["data"],
                 ).any()
             ),

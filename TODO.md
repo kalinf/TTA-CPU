@@ -40,7 +40,7 @@
 - automatyczne wykrywanie Fmax i dostrajanie PLL pod ten Fmax (jest program który wylicza dla pll na ecp5)
 
 ## Optional
-- UART
+- ~~UART~~
 - wiele możliwych szyn instrukcji (VLIV)
 
 
@@ -61,7 +61,7 @@ co przed wtorkiem [hehe na pewno]:
 - subsignals w resources config i piny io
 - pll
 - pythonowy pseudo-assembler <--> json <--> plik binarny
-- osobne miejsce na ip cores niebędące fu
+- ~~osobne miejsce na ip cores niebędące fu~~
 - synchronizować domyślnie inputy??? jeżeli, to wypadałoby W JEDNYM MIEJSCU a nie w każdym fu
 - popraw skrypt formatujący
 - usunąć init z base_asm_test
@@ -71,7 +71,7 @@ co potem:
 - częściowo pipelined [NIE ZDĄŻĘ, ODPADA]
 - wiele możliwych szyn instrukcji (VLIV)
 - wiele możliwych szyn danych (przerwania między jednostkami)
-- komunikacja z komputerem
+- ~~komunikacja z komputerem~~
 
 pytania
 - programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
