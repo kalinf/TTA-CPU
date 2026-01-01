@@ -55,12 +55,15 @@ def build_addresses_core_model(config_detail_file: Path):
     class CoreModel:
         def __init__(self, configuration):
             for fu in configuration["functional_units"]:
-                setattr(self, fu["name"], self.FUModel(fu))
+                setattr(self, fu["name"], self.FUModel(fu, 0))
+                if "instances" in fu:
+                    for i in range(1, fu["instances"]):
+                        setattr(self, fu["name"] + str(i), self.FUModel(fu, i))
 
         class FUModel:
-            def __init__(self, fu):
-                self.inputs = list(range(fu["input_address"], fu["input_address"] + fu["inputs"]))
-                self.outputs = list(range(fu["output_address"], fu["output_address"] + fu["outputs"]))
-                self.inouts = list(range(fu["inout_address"], fu["inout_address"] + fu["inouts"]))
+            def __init__(self, fu, nr):
+                self.inputs = list(range(fu["input_address"][nr], fu["input_address"][nr] + fu["inputs"]))
+                self.outputs = list(range(fu["output_address"][nr], fu["output_address"][nr] + fu["outputs"]))
+                self.inouts = list(range(fu["inout_address"][nr], fu["inout_address"][nr] + fu["inouts"]))
 
     return CoreModel(configuration)

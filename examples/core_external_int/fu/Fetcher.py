@@ -1,5 +1,5 @@
 from amaranth import *
-from core.utils.ReadPort import ReadPort
+from core.utils.MemoryPorts import ReadPort
 from amaranth.build import Resource
 from core.FU import FU
 from core.bus import Bus
@@ -8,7 +8,7 @@ from core.registry import register_fu
 
 class Fetcher(FU):
     """
-    Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.
+    Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations. Handles external interrupts.
 
     Communication ports:
     ----------

@@ -50,7 +50,7 @@ def test_uart_echo(core_address_model, dir_path, vcd_file, mock_resources):
         ctx.set(core.resources["uart_rx"].i, 1)
         await ctx.tick(domain="falling").repeat(100)
         await uart_transmit(ctx, 71, 4e-8, 9600, core)
-        await ctx.tick(domain="falling").repeat(20000)
+        await ctx.tick(domain="falling").repeat(1000)
 
     sim.add_testbench(tb)
     if vcd_file is not None:
@@ -58,6 +58,3 @@ def test_uart_echo(core_address_model, dir_path, vcd_file, mock_resources):
             sim.run()
     else:
         sim.run()
-
-
-print(to_binary(71, 8))

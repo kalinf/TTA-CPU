@@ -27,7 +27,7 @@ def load_all_ip_classes(ip_dir: Path):
         spec.loader.exec_module(module)
 
 
-def gen_core(directory: Path, instr_memory_init=[], synthesis=False, resources=None):
+def gen_core(directory: Path, instr_memory_init=[], data_memory_init=[], synthesis=False, resources=None):
     target_dir = directory.resolve()
     fu_dir = target_dir / "fu"
     ip_dir = target_dir / "ip"
@@ -52,12 +52,28 @@ def gen_core(directory: Path, instr_memory_init=[], synthesis=False, resources=N
                         input_count=f_unit["inputs"],
                         output_count=f_unit["outputs"],
                         inout_count=f_unit["inouts"],
-                        input_address=f_unit["input_address"],
-                        inout_address=f_unit["inout_address"],
-                        output_address=f_unit["output_address"],
+                        input_address=f_unit["input_address"][0],
+                        inout_address=f_unit["inout_address"][0],
+                        output_address=f_unit["output_address"][0],
                     ),
                 )
             ]
+            if "instances" in f_unit:
+                for i in range(1, f_unit["instances"]):
+                    fu_partial += [
+                        (
+                            name + str(i),
+                            partial(
+                                FU_REGISTRY[name],
+                                input_count=f_unit["inputs"],
+                                output_count=f_unit["outputs"],
+                                inout_count=f_unit["inouts"],
+                                input_address=f_unit["input_address"][i],
+                                inout_address=f_unit["inout_address"][i],
+                                output_address=f_unit["output_address"][i],
+                            ),
+                        )
+                    ]
         else:
             raise UnimplementedFU(f"No implementation file found for {name}.")
 
@@ -70,6 +86,8 @@ def gen_core(directory: Path, instr_memory_init=[], synthesis=False, resources=N
             instr_memory_depth=configuration["instruction_memory_depth"],
             instr_memory_init=instr_memory_init,
             instr_memory_rports=configuration["instruction_memory_read_ports"],
+            data_memory_depth=configuration["data_memory_depth"],
+            data_memory_init=data_memory_init,
             synthesis=synthesis,
             resources=resources,
         )
@@ -83,5 +101,7 @@ def gen_core(directory: Path, instr_memory_init=[], synthesis=False, resources=N
             instr_memory_depth=configuration["instruction_memory_depth"],
             instr_memory_init=instr_memory_init,
             instr_memory_rports=configuration["instruction_memory_read_ports"],
+            data_memory_depth=configuration["data_memory_depth"],
+            data_memory_init=data_memory_init,
             synthesis=synthesis,
         )

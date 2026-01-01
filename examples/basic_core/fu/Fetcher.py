@@ -1,5 +1,5 @@
 from amaranth import *
-from core.utils.ReadPort import ReadPort
+from core.utils.MemoryPorts import ReadPort
 from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu

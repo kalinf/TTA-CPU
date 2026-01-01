@@ -5,6 +5,7 @@
     "minimal_constant_size": 7,
     "instruction_memory_depth": 100,
     "instruction_memory_read_ports": 2,
+    "data_memory_depth": 100,
     "functional_units": [
         {
             "name": "Adder",
@@ -15,6 +16,7 @@
         },
         {
             "name": "Increaser",
+            "instances": 2,
             "inputs": 0,
             "outputs": 0,
             "inouts": 2,
@@ -46,10 +48,17 @@
             "inputs": 4,
             "outputs": 2,
             "inouts": 1,
-            "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
+            "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations. Handles external interrupts.",
             "resources": [
                 "button"
             ]
+        },
+        {
+            "name": "DataMemory",
+            "inputs": 3,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Operates on data memory."
         },
         {
             "name": "UART",

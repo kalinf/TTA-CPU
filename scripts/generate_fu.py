@@ -59,7 +59,7 @@ NEWLINE = """
         """
 
 FETCHER_IMPORTS = """
-from core.utils.ReadPort import ReadPort"""
+from core.utils.MemoryPorts import ReadPort"""
 
 FETCHER_ARGS = """instruction_memory_depth: int,
         instruction_memory_read_ports: int,"""
@@ -67,6 +67,15 @@ FETCHER_ARGS = """instruction_memory_depth: int,
 FETCHER_CODE_INIT = """self.instruction_memory_depth = instruction_memory_depth
         self.instruction_memory_read_ports = instruction_memory_read_ports
         self.instr_read_ports = [ReadPort(depth=instruction_memory_depth, shape=self.instr_bus.data.shape()) for _ in range(instruction_memory_read_ports)]"""
+
+MEMORY_IMPORTS = """
+from core.utils.MemoryPorts import ReadPort, WritePort"""
+
+MEMORY_ARGS = """data_memory_depth: int,"""
+
+MEMORY_CODE_INIT = """self.data_memory_depth = data_memory_depth
+        self.data_read_port = ReadPort(depth=data_memory_depth, shape=self.data_bus.data.shape())
+        self.data_write_port = WritePort(depth=data_memory_depth, shape=self.data_bus.data.shape())"""
 
 RESOURCE_CODE_INIT = """self.resources = resources"""
 
@@ -120,6 +129,8 @@ def get_extra_code_init(fu):
     res = ""
     if fu["name"] == "Fetcher":
         res += NEWLINE + FETCHER_CODE_INIT
+    if fu["name"] == "DataMemory":
+        res += NEWLINE + MEMORY_CODE_INIT
     if "resources" in fu:
         res += NEWLINE + RESOURCE_CODE_INIT
     return res
@@ -129,6 +140,8 @@ def get_extra_imports(fu):
     res = ""
     if fu["name"] == "Fetcher":
         res += FETCHER_IMPORTS
+    if fu["name"] == "DataMemory":
+        res += MEMORY_IMPORTS
     if "resources" in fu:
         res += RESOURCE_IMPORTS
     return res
@@ -138,6 +151,8 @@ def get_extra_args(fu):
     res = ""
     if fu["name"] == "Fetcher":
         res += NEWLINE + FETCHER_ARGS
+    if fu["name"] == "DataMemory":
+        res += NEWLINE + MEMORY_ARGS
     if "resources" in fu:
         res += NEWLINE + RESOURCE_ARGS
     return res
@@ -190,8 +205,13 @@ def main():
     output_count = 0
     inout_count = 0
     for f_unit in configuration["functional_units"]:
-        f_unit["input_address"] = input_count
-        input_count += f_unit["inputs"]
+        instances = f_unit["instances"] if "instances" in f_unit else 1
+        f_unit["input_address"] = [None] * instances
+        f_unit["output_address"] = [None] * instances
+        f_unit["inout_address"] = [None] * instances
+        for i in range(instances):
+            f_unit["input_address"][i] = input_count
+            input_count += f_unit["inputs"]
         generate_fu(
             fu_dir,
             f_unit["name"],
@@ -205,11 +225,15 @@ def main():
             inout_count=f_unit["inouts"],
         )
     for f_unit in configuration["functional_units"]:
-        f_unit["inout_address"] = input_count + inout_count
-        inout_count += f_unit["inouts"]
+        instances = f_unit["instances"] if "instances" in f_unit else 1
+        for i in range(instances):
+            f_unit["inout_address"][i] = input_count + inout_count
+            inout_count += f_unit["inouts"]
     for f_unit in configuration["functional_units"]:
-        f_unit["output_address"] = input_count + inout_count + output_count
-        output_count += f_unit["outputs"]
+        instances = f_unit["instances"] if "instances" in f_unit else 1
+        for i in range(instances):
+            f_unit["output_address"][i] = input_count + inout_count + output_count
+            output_count += f_unit["outputs"]
     configuration["src_addr_width"] = src_addr_width = max(
         (output_count + inout_count).bit_length(),
         min(configuration["minimal_constant_size"], configuration["word_size"]),

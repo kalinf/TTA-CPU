@@ -3,6 +3,7 @@
     "word_size": 16,
     "instruction_memory_depth": 100,
     "instruction_memory_read_ports": 2,
+    "data_memory_depth": 100,
     "functional_units": [
         {
             "name": "Adder",
@@ -10,19 +11,35 @@
             "outputs": 1,
             "inouts": 0,
             "description": "Adds the operands.",
-            "input_address": 1,
-            "inout_address": 17,
-            "output_address": 23
+            "input_address": [
+                1
+            ],
+            "output_address": [
+                28
+            ],
+            "inout_address": [
+                20
+            ]
         },
         {
             "name": "Increaser",
+            "instances": 2,
             "inputs": 0,
             "outputs": 0,
             "inouts": 2,
             "description": "Increments the main value by another value during each readout.",
-            "input_address": 3,
-            "inout_address": 17,
-            "output_address": 24
+            "input_address": [
+                3,
+                3
+            ],
+            "output_address": [
+                29,
+                29
+            ],
+            "inout_address": [
+                20,
+                22
+            ]
         },
         {
             "name": "Looper",
@@ -30,9 +47,15 @@
             "outputs": 1,
             "inouts": 0,
             "description": "Loops through a range of numbers.",
-            "input_address": 3,
-            "inout_address": 19,
-            "output_address": 24
+            "input_address": [
+                3
+            ],
+            "output_address": [
+                29
+            ],
+            "inout_address": [
+                24
+            ]
         },
         {
             "name": "Logical",
@@ -40,9 +63,15 @@
             "outputs": 8,
             "inouts": 0,
             "description": "Logical operations.",
-            "input_address": 6,
-            "inout_address": 19,
-            "output_address": 25
+            "input_address": [
+                6
+            ],
+            "output_address": [
+                30
+            ],
+            "inout_address": [
+                24
+            ]
         },
         {
             "name": "ConstantLoader",
@@ -50,22 +79,50 @@
             "outputs": 1,
             "inouts": 0,
             "description": "Loads constants wider than source addresses.",
-            "input_address": 9,
-            "inout_address": 19,
-            "output_address": 33
+            "input_address": [
+                9
+            ],
+            "output_address": [
+                38
+            ],
+            "inout_address": [
+                24
+            ]
         },
         {
             "name": "Fetcher",
             "inputs": 4,
             "outputs": 2,
             "inouts": 1,
-            "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
+            "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations. Handles external interrupts.",
             "resources": [
                 "button"
             ],
-            "input_address": 11,
-            "inout_address": 19,
-            "output_address": 34
+            "input_address": [
+                11
+            ],
+            "output_address": [
+                39
+            ],
+            "inout_address": [
+                24
+            ]
+        },
+        {
+            "name": "DataMemory",
+            "inputs": 3,
+            "outputs": 1,
+            "inouts": 0,
+            "description": "Operates on data memory.",
+            "input_address": [
+                15
+            ],
+            "output_address": [
+                41
+            ],
+            "inout_address": [
+                25
+            ]
         },
         {
             "name": "UART",
@@ -77,9 +134,15 @@
                 "uart_tx",
                 "uart_rx"
             ],
-            "input_address": 15,
-            "inout_address": 20,
-            "output_address": 36
+            "input_address": [
+                18
+            ],
+            "output_address": [
+                42
+            ],
+            "inout_address": [
+                25
+            ]
         },
         {
             "name": "Regs",
@@ -87,9 +150,15 @@
             "outputs": 0,
             "inouts": 2,
             "description": "General purpose registers.",
-            "input_address": 16,
-            "inout_address": 20,
-            "output_address": 39
+            "input_address": [
+                19
+            ],
+            "output_address": [
+                45
+            ],
+            "inout_address": [
+                25
+            ]
         },
         {
             "name": "Result",
@@ -97,9 +166,15 @@
             "outputs": 0,
             "inouts": 0,
             "description": "Result register for debug purpose.",
-            "input_address": 16,
-            "inout_address": 22,
-            "output_address": 39
+            "input_address": [
+                19
+            ],
+            "output_address": [
+                45
+            ],
+            "inout_address": [
+                27
+            ]
         },
         {
             "name": "Pins",
@@ -111,9 +186,15 @@
                 "button",
                 "leds"
             ],
-            "input_address": 17,
-            "inout_address": 22,
-            "output_address": 39
+            "input_address": [
+                20
+            ],
+            "output_address": [
+                45
+            ],
+            "inout_address": [
+                27
+            ]
         }
     ],
     "resources": [

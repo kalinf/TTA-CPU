@@ -4,6 +4,19 @@ Transport Triggered Architecture cores generator
 `python3 generate_fu.py <directory> [<config_file>]` generates template files for functional units implementation. 
 Based on config_file (default config.json) file it produces directory `fu` with files `FUname.py` (where FUName corresponds to `name` field of fu in configuration file). 
 It also produces a `config_detail.json` which contains detailed core configuration with fu's addresses and instruction elements length computed.
+Many instances of a functional unit can be added by simply add a field `instances` in the configuration file. 
+Example usage:
+```
+{
+    "name": "Adder",
+    "instances": 3,
+    "inputs": 2,
+    "outputs": 1,
+    "inouts": 0,
+    "description": "Adds the operands."
+},
+```
+3 instances of Adder will be created and named `Adder`, `Adder1` and `Adder2`.
 
 IP Cores (not being Functional Units) implementations can be placed in directory `ip` in the same superdirectory as `fu`. The implemented module has to be registered in
 `IP_REGISTRY` what can be done by calling `core.registry.register_ip(IP_CORE)` below the class implementation. Registered IP Cores are loaded while main core generation.
@@ -23,7 +36,8 @@ Phase between `rising`/`falling` clock and `mem` clock is shown at the figure be
 
 ![clocks](utils/img/clocks.png)
 
-To access instruction memory, the unit called `Fetcher` has to be defined. It can operate on memory using ports `instr_read_ports[0:instruction_memory_read_ports-1]` already defined in the generated file (`instruction_memory_read_ports` is defined in config file by user).
+To read instruction memory, the unit called `Fetcher` has to be defined. It can operate on memory using ports `instr_read_ports[0:instruction_memory_read_ports-1]` already defined in the generated file (`instruction_memory_read_ports` is defined in config file by user).
+To access data memory, the unit called `DataMemory` has to be defined. It can operate on memory using ports: `data_read_port` and `data_write_port` already defined in the generated file.
 
 To insert firmware into core it first must be translated to json format. Translation can be achieved using `translator.py` script.
 Example usage:

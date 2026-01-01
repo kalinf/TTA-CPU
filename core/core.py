@@ -29,6 +29,8 @@ class TTA_Core(Elaboratable):
         instr_memory_depth,
         instr_memory_rports=1,
         instr_memory_init=[],
+        data_memory_depth=64,
+        data_memory_init=[],
         resources={},
         synthesis=False,
     ):
@@ -37,6 +39,8 @@ class TTA_Core(Elaboratable):
         self.instr_memory_depth = instr_memory_depth
         self.instr_memory_rports = instr_memory_rports
         self.instr_memory_init = instr_memory_init
+        self.data_memory_depth = data_memory_depth
+        self.data_memory_init = data_memory_init
         self.FUs = FUs
         self.instr_bus = Bus(self.instr_layout)
         self.data_bus = Bus(self.data_layout)
@@ -70,6 +74,12 @@ class TTA_Core(Elaboratable):
         instr_write_port = instr_mem.write_port(domain="mem")
         instr_read_ports = [instr_mem.read_port(domain="mem") for _ in range(self.instr_memory_rports)]
 
+        m.submodules.data_mem = self.data_mem = data_mem = Memory(
+            shape=self.data_layout, depth=self.data_memory_depth, init=self.data_memory_init
+        )
+        data_write_port = data_mem.write_port(domain="mem")
+        data_read_port = data_mem.read_port(domain="mem")
+
         for fu in self.FUs:
             sig = inspect.signature(fu[1].func)
             parameters = {"instr_bus": self.instr_bus, "data_bus": self.data_bus}
@@ -77,6 +87,8 @@ class TTA_Core(Elaboratable):
                 parameters["instruction_memory_depth"] = self.instr_memory_depth
             if "instruction_memory_read_ports" in [name for (name, _) in sig.parameters.items()]:
                 parameters["instruction_memory_read_ports"] = self.instr_memory_rports
+            if "data_memory_depth" in [name for (name, _) in sig.parameters.items()]:
+                parameters["data_memory_depth"] = self.data_memory_depth
             if "resources" in [name for (name, _) in sig.parameters.items()]:
                 parameters["resources"] = self.resources
 
@@ -88,6 +100,15 @@ class TTA_Core(Elaboratable):
                         instr_read_ports[i].en.eq(instr_read_port.en),
                         instr_read_port.data.eq(instr_read_ports[i].data),
                     ]
+            if fu[0] == "DataMemory":
+                m.d.comb += [
+                    data_read_port.addr.eq(m.submodules[fu[0]].data_read_port.addr),
+                    data_read_port.en.eq(m.submodules[fu[0]].data_read_port.en),
+                    m.submodules[fu[0]].data_read_port.data.eq(data_read_port.data),
+                    data_write_port.addr.eq(m.submodules[fu[0]].data_write_port.addr),
+                    data_write_port.en.eq(m.submodules[fu[0]].data_write_port.en),
+                    data_write_port.data.eq(m.submodules[fu[0]].data_write_port.data),
+                ]
 
             setattr(self, fu[0], m.submodules[fu[0]])
 
