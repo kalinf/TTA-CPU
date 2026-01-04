@@ -41,7 +41,7 @@ To access data memory, the unit called `DataMemory` has to be defined. It can op
 
 To insert firmware into core it first must be translated to json format. Translation can be achieved using `translator.py` script.
 Example usage:
-`PYTHONPATH=. python3 scripts/translator.py -m "python2json" -d "examples/core_external_int/" -p "examples/core_external_int/tests/asm/handlers.py" -f "wandering_led"`
+`PYTHONPATH=. python3 scripts/translator.py -m "python2json" -d "examples/core_external_int/" --program-file "examples/core_external_int/tests/asm/handlers.py" -f "wandering_led"`
 Program in json format can be passed as an argument to the script `synthesize.py`.
 Example usage:
 `PYTHONPATH=. python3 scripts/synthesize.py --config-directory="examples/core_external_int/" -v --init-instr-memory="examples/core_external_int/program.json" -f`

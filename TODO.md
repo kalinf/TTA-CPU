@@ -69,13 +69,21 @@ co przed wtorkiem [hehe na pewno]:
 Priorytetowo:
 - ~~pamięć danych~~
 - ~~możliwe zwielokrotnianie FU~~
-- modyfikator pamięci programu
+- ~~modyfikator pamięci programu~~
+- ~~ładowanie programu z pamięci danych~~
 - wymyślić jak dobrze przesyłać po UART dane długości innej niż bajt
 - ustalenie ramki komunikacyjnej pamięci programu i danych (dla bootloadera)
 - bootloader
 - pll
 
 POTEM PRACA PISEMNA
+
+poprawki:
+- dowolne nazwy plików wychodzące z translatora
+- testy żeby testowały
+- usunąć init z base_asm_test
+- popraw skrypt formatujący
+- dobra synchronizacja danych UART
 
 jeśli zdążę to potem:
 - stos

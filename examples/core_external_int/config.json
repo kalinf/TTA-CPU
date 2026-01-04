@@ -61,6 +61,13 @@
             "description": "Operates on data memory."
         },
         {
+            "name": "ProgMemory",
+            "inputs": 2,
+            "outputs": 0,
+            "inouts": 0,
+            "description": "Modifies program memory."
+        },
+        {
             "name": "UART",
             "inputs": 1,
             "outputs": 3,

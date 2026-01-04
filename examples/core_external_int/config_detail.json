@@ -15,10 +15,10 @@
                 1
             ],
             "output_address": [
-                28
+                30
             ],
             "inout_address": [
-                20
+                22
             ]
         },
         {
@@ -33,12 +33,12 @@
                 3
             ],
             "output_address": [
-                29,
-                29
+                31,
+                31
             ],
             "inout_address": [
-                20,
-                22
+                22,
+                24
             ]
         },
         {
@@ -51,10 +51,10 @@
                 3
             ],
             "output_address": [
-                29
+                31
             ],
             "inout_address": [
-                24
+                26
             ]
         },
         {
@@ -67,10 +67,10 @@
                 6
             ],
             "output_address": [
-                30
+                32
             ],
             "inout_address": [
-                24
+                26
             ]
         },
         {
@@ -83,10 +83,10 @@
                 9
             ],
             "output_address": [
-                38
+                40
             ],
             "inout_address": [
-                24
+                26
             ]
         },
         {
@@ -102,10 +102,10 @@
                 11
             ],
             "output_address": [
-                39
+                41
             ],
             "inout_address": [
-                24
+                26
             ]
         },
         {
@@ -118,10 +118,26 @@
                 15
             ],
             "output_address": [
-                41
+                43
             ],
             "inout_address": [
-                25
+                27
+            ]
+        },
+        {
+            "name": "ProgMemory",
+            "inputs": 2,
+            "outputs": 0,
+            "inouts": 0,
+            "description": "Modifies program memory.",
+            "input_address": [
+                18
+            ],
+            "output_address": [
+                44
+            ],
+            "inout_address": [
+                27
             ]
         },
         {
@@ -135,13 +151,13 @@
                 "uart_rx"
             ],
             "input_address": [
-                18
+                20
             ],
             "output_address": [
-                42
+                44
             ],
             "inout_address": [
-                25
+                27
             ]
         },
         {
@@ -151,13 +167,13 @@
             "inouts": 2,
             "description": "General purpose registers.",
             "input_address": [
-                19
+                21
             ],
             "output_address": [
-                45
+                47
             ],
             "inout_address": [
-                25
+                27
             ]
         },
         {
@@ -167,13 +183,13 @@
             "inouts": 0,
             "description": "Result register for debug purpose.",
             "input_address": [
-                19
+                21
             ],
             "output_address": [
-                45
+                47
             ],
             "inout_address": [
-                27
+                29
             ]
         },
         {
@@ -187,13 +203,13 @@
                 "leds"
             ],
             "input_address": [
-                20
+                22
             ],
             "output_address": [
-                45
+                47
             ],
             "inout_address": [
-                27
+                29
             ]
         }
     ],

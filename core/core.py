@@ -109,6 +109,12 @@ class TTA_Core(Elaboratable):
                     data_write_port.en.eq(m.submodules[fu[0]].data_write_port.en),
                     data_write_port.data.eq(m.submodules[fu[0]].data_write_port.data),
                 ]
+            if fu[0] == "ProgMemory":
+                m.d.comb += [
+                    instr_write_port.addr.eq(m.submodules[fu[0]].instr_write_port.addr),
+                    instr_write_port.en.eq(m.submodules[fu[0]].instr_write_port.en),
+                    instr_write_port.data.eq(m.submodules[fu[0]].instr_write_port.data),
+                ]
 
             setattr(self, fu[0], m.submodules[fu[0]])
 

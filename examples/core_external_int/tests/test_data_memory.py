@@ -5,6 +5,7 @@ from utils.utils import resolve_bb_labels
 from examples.core_external_int.tests.asm.data_memory import data_memory
 from core.generate_core import gen_core
 
+
 def test_data_memory(core_address_model, dir_path, vcd_file, mock_resources):
     init = data_memory(core_address_model)
     resolved_init = resolve_bb_labels(init)
@@ -15,6 +16,7 @@ def test_data_memory(core_address_model, dir_path, vcd_file, mock_resources):
 
     async def tb(ctx):
         await ctx.tick(domain="falling").repeat(20000)
+        # TODO: actually check the correctness of transmitted data
 
     sim.add_testbench(tb)
     if vcd_file is not None:

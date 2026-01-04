@@ -2,10 +2,10 @@ import json
 from pathlib import Path
 
 
-def resolve_bb_labels(init):
+def resolve_bb_labels(init, offset=0):
     addr_map = {}
     resolved_init = []
-    current_addr = 0
+    current_addr = offset
 
     # First pass: map labels to addresses
     for item in init:

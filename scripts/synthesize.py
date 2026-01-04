@@ -68,6 +68,12 @@ def main():
         help="Provide json file containing initial values for instruction memory. Default: empty",
     )
 
+    parser.add_argument(
+        "--init-data-memory",
+        default="",
+        help="Provide json file containing initial values for data memory. Default: empty",
+    )
+
     args = parser.parse_args()
 
     os.environ["AMARANTH_verbose"] = "true" if args.verbose else "false"
@@ -77,10 +83,11 @@ def main():
         raise FileNotFoundError(f"Invalid core directory path: {dir_path}")
 
     instr_memory_init = json2python(Path(args.init_instr_memory).resolve()) if args.init_instr_memory != "" else []
+    data_memory_init = json2python(Path(args.init_data_memory).resolve()) if args.init_data_memory != "" else []
     platform = Colorlight_i9_R72Platform()
     add_resources(platform, create_resources(dir_path))
     core = Top(
-        gen_core(dir_path, instr_memory_init=instr_memory_init, synthesis=True),
+        gen_core(dir_path, instr_memory_init=instr_memory_init, data_memory_init=data_memory_init, synthesis=True),
         resources=get_requested_resources_names(dir_path),
     )
     platform.build(core, do_program=args.flash)

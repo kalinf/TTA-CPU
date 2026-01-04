@@ -68,12 +68,20 @@ FETCHER_CODE_INIT = """self.instruction_memory_depth = instruction_memory_depth
         self.instruction_memory_read_ports = instruction_memory_read_ports
         self.instr_read_ports = [ReadPort(depth=instruction_memory_depth, shape=self.instr_bus.data.shape()) for _ in range(instruction_memory_read_ports)]"""
 
-MEMORY_IMPORTS = """
+PROG_MEMORY_IMPORTS = """
+from core.utils.MemoryPorts import WritePort"""
+
+PROG_MEMORY_ARGS = """instruction_memory_depth: int,"""
+
+PROG_MEMORY_CODE_INIT = """self.instruction_memory_depth = instruction_memory_depth
+        self.instr_write_port = WritePort(depth=instruction_memory_depth, shape=self.instr_bus.data.shape())"""
+
+DATA_MEMORY_IMPORTS = """
 from core.utils.MemoryPorts import ReadPort, WritePort"""
 
-MEMORY_ARGS = """data_memory_depth: int,"""
+DATA_MEMORY_ARGS = """data_memory_depth: int,"""
 
-MEMORY_CODE_INIT = """self.data_memory_depth = data_memory_depth
+DATA_MEMORY_CODE_INIT = """self.data_memory_depth = data_memory_depth
         self.data_read_port = ReadPort(depth=data_memory_depth, shape=self.data_bus.data.shape())
         self.data_write_port = WritePort(depth=data_memory_depth, shape=self.data_bus.data.shape())"""
 
@@ -130,7 +138,9 @@ def get_extra_code_init(fu):
     if fu["name"] == "Fetcher":
         res += NEWLINE + FETCHER_CODE_INIT
     if fu["name"] == "DataMemory":
-        res += NEWLINE + MEMORY_CODE_INIT
+        res += NEWLINE + DATA_MEMORY_CODE_INIT
+    if fu["name"] == "ProgMemory":
+        res += NEWLINE + PROG_MEMORY_CODE_INIT
     if "resources" in fu:
         res += NEWLINE + RESOURCE_CODE_INIT
     return res
@@ -141,7 +151,9 @@ def get_extra_imports(fu):
     if fu["name"] == "Fetcher":
         res += FETCHER_IMPORTS
     if fu["name"] == "DataMemory":
-        res += MEMORY_IMPORTS
+        res += DATA_MEMORY_IMPORTS
+    if fu["name"] == "ProgMemory":
+        res += PROG_MEMORY_IMPORTS
     if "resources" in fu:
         res += RESOURCE_IMPORTS
     return res
@@ -152,7 +164,9 @@ def get_extra_args(fu):
     if fu["name"] == "Fetcher":
         res += NEWLINE + FETCHER_ARGS
     if fu["name"] == "DataMemory":
-        res += NEWLINE + MEMORY_ARGS
+        res += NEWLINE + DATA_MEMORY_ARGS
+    if fu["name"] == "ProgMemory":
+        res += NEWLINE + PROG_MEMORY_ARGS
     if "resources" in fu:
         res += NEWLINE + RESOURCE_ARGS
     return res

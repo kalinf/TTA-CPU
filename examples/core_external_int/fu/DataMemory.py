@@ -4,20 +4,22 @@ from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
 
-class DataMemory(FU):   
+
+class DataMemory(FU):
     """
     Operates on data memory.
-     
+
     Communication ports:
     ----------
-    3 Inputs: 
+    3 Inputs:
         - 0: Read address
         - 1: Write address
         - 2: Write data (triggers write to memory)
-    1 Outputs: 
+    1 Outputs:
         - 0: Read data
-    0 Inouts: 
+    0 Inouts:
     """
+
     def __init__(
         self,
         instr_bus: Bus,
@@ -40,14 +42,18 @@ class DataMemory(FU):
             inout_address=inout_address,
             output_address=output_address,
         )
-        
+
         self.data_memory_depth = data_memory_depth
-        self.data_read_port = ReadPort(depth=data_memory_depth, shape=self.data_bus.data.shape())
-        self.data_write_port = WritePort(depth=data_memory_depth, shape=self.data_bus.data.shape())
-    
+        self.data_read_port = ReadPort(
+            depth=data_memory_depth, shape=self.data_bus.data.shape()
+        )
+        self.data_write_port = WritePort(
+            depth=data_memory_depth, shape=self.data_bus.data.shape()
+        )
+
     def elaborate(self, platform):
         m = super().elaborate(platform)
-        
+
         m.d.comb += [
             self.data_read_port.en.eq(1),
             self.data_read_port.addr.eq(self.inputs[0]["data"]),
@@ -55,12 +61,13 @@ class DataMemory(FU):
             self.data_write_port.addr.eq(self.inputs[1]["data"]),
             self.data_write_port.data.eq(self.inputs[2]["data"]),
         ]
-        
+
         with m.If(self.instr_bus.data.dst_addr == self.inputs[2]["addr"]):
             m.d.falling += self.data_write_port.en.eq(1)
         with m.Else():
             m.d.falling += self.data_write_port.en.eq(0)
 
         return m
+
 
 register_fu("DataMemory", DataMemory)

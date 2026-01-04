@@ -1,6 +1,7 @@
 def data_memory(core):
+    init = [("turn_jump_off", [{"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}])]
     # first instruction is infinite loop when jump condition is true
-    init = [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
+    init += [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
     init += [
         (
             "setup",
@@ -113,7 +114,7 @@ def data_memory(core):
                     "src_addr": core.Logical.outputs[5],
                     "dst_addr": core.Fetcher.inputs[0],
                 },
-            ]
+            ],
         )
     ]
     init += [
@@ -128,7 +129,7 @@ def data_memory(core):
                     "src_addr": 0,
                     "dst_addr": core.Increaser.inouts[0],
                 },
-            ]
+            ],
         )
     ]
     init += [
@@ -185,7 +186,7 @@ def data_memory(core):
                     "src_addr": core.Logical.outputs[5],
                     "dst_addr": core.Fetcher.inputs[0],
                 },
-                # transmission already done 
+                # transmission already done
                 # set a proper mask
                 {
                     "constant": 1,

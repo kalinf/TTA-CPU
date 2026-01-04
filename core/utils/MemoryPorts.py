@@ -11,6 +11,6 @@ class ReadPort:
 
 class WritePort:
     def __init__(self, depth, shape):
-        self.en = Signal(init=1, name="write_port_en")
+        self.en = Signal(name="write_port_en")
         self.addr = Signal(ceil_log2(depth), name="write_port_addr")
         self.data = Signal(shape, name="write_port_data")

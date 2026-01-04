@@ -51,6 +51,7 @@ def test_uart_echo(core_address_model, dir_path, vcd_file, mock_resources):
         await ctx.tick(domain="falling").repeat(100)
         await uart_transmit(ctx, 71, 4e-8, 9600, core)
         await ctx.tick(domain="falling").repeat(1000)
+        # TODO: actually check the correctness of transmitted data
 
     sim.add_testbench(tb)
     if vcd_file is not None:
