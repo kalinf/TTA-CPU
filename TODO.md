@@ -53,14 +53,14 @@ co przed wtorkiem [hehe na pewno]:
 - ~~żeby się i syntezowało i pytestowało~~
 - ~~procedury obsługi przerwań i reakcja na zdarzenia zewnętrzne~~
 - obsługa wielu przerwań
-- stos i obsługa zapisania stanu przy wejściu do handlera przerwań
+- ~~stos~~ i obsługa zapisania stanu przy wejściu do handlera przerwań
 - ~~uruchamianie różnych testów dla różnych rdzeni~~
 - ~~przekazywanie resources~~
 - ~~"mockowanie" resources dla symulacji~~
 - ograniczanie zasobów przekazywanych do jednostek???
 - subsignals w resources config i piny io
 - pll
-- pythonowy pseudo-assembler <--> json <--> plik binarny
+- ~~pythonowy pseudo-assembler <--> json~~ <--> plik binarny
 - ~~osobne miejsce na ip cores niebędące fu~~
 - synchronizować domyślnie inputy??? jeżeli, to wypadałoby W JEDNYM MIEJSCU a nie w każdym fu
 - popraw skrypt formatujący
@@ -86,7 +86,7 @@ poprawki:
 - dobra synchronizacja danych UART
 
 jeśli zdążę to potem:
-- stos
+- ~~stos~~
 - przywracanie stanu w handlerach (przykład - jednoczesne uart echo i wandering led)
 
 co potem:

@@ -46,12 +46,19 @@
         {
             "name": "Fetcher",
             "inputs": 4,
-            "outputs": 2,
+            "outputs": 3,
             "inouts": 1,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations. Handles external interrupts.",
             "resources": [
                 "button"
             ]
+        },
+        {
+            "name": "Stack",
+            "inputs": 0,
+            "outputs": 2,
+            "inouts": 1,
+            "description": "Last In First Out Queue."
         },
         {
             "name": "DataMemory",

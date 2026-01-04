@@ -15,7 +15,7 @@
                 1
             ],
             "output_address": [
-                30
+                31
             ],
             "inout_address": [
                 22
@@ -33,8 +33,8 @@
                 3
             ],
             "output_address": [
-                31,
-                31
+                32,
+                32
             ],
             "inout_address": [
                 22,
@@ -51,7 +51,7 @@
                 3
             ],
             "output_address": [
-                31
+                32
             ],
             "inout_address": [
                 26
@@ -67,7 +67,7 @@
                 6
             ],
             "output_address": [
-                32
+                33
             ],
             "inout_address": [
                 26
@@ -83,7 +83,7 @@
                 9
             ],
             "output_address": [
-                40
+                41
             ],
             "inout_address": [
                 26
@@ -92,7 +92,7 @@
         {
             "name": "Fetcher",
             "inputs": 4,
-            "outputs": 2,
+            "outputs": 3,
             "inouts": 1,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations. Handles external interrupts.",
             "resources": [
@@ -102,10 +102,26 @@
                 11
             ],
             "output_address": [
-                41
+                42
             ],
             "inout_address": [
                 26
+            ]
+        },
+        {
+            "name": "Stack",
+            "inputs": 0,
+            "outputs": 2,
+            "inouts": 1,
+            "description": "Last In First Out Queue.",
+            "input_address": [
+                15
+            ],
+            "output_address": [
+                45
+            ],
+            "inout_address": [
+                27
             ]
         },
         {
@@ -118,10 +134,10 @@
                 15
             ],
             "output_address": [
-                43
+                47
             ],
             "inout_address": [
-                27
+                28
             ]
         },
         {
@@ -134,10 +150,10 @@
                 18
             ],
             "output_address": [
-                44
+                48
             ],
             "inout_address": [
-                27
+                28
             ]
         },
         {
@@ -154,10 +170,10 @@
                 20
             ],
             "output_address": [
-                44
+                48
             ],
             "inout_address": [
-                27
+                28
             ]
         },
         {
@@ -170,10 +186,10 @@
                 21
             ],
             "output_address": [
-                47
+                51
             ],
             "inout_address": [
-                27
+                28
             ]
         },
         {
@@ -186,10 +202,10 @@
                 21
             ],
             "output_address": [
-                47
+                51
             ],
             "inout_address": [
-                29
+                30
             ]
         },
         {
@@ -206,10 +222,10 @@
                 22
             ],
             "output_address": [
-                47
+                51
             ],
             "inout_address": [
-                29
+                30
             ]
         }
     ],

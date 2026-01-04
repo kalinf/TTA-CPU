@@ -20,6 +20,7 @@ class Fetcher(FU):
     2 Outputs:
         - 0: indirect source address
         - 1: indirect destination address
+        - 2: program counter
     1 Inouts:
         - 0: address of interrupt handler
     """
