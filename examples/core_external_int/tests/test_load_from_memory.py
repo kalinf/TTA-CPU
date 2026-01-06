@@ -24,6 +24,7 @@ def test_bootloader_data_memory(core_address_model, dir_path, vcd_file, mock_res
         src_width=configuration["src_addr_width"],
         dest_width=configuration["dest_addr_width"],
         data_width=configuration["word_size"],
+        start_length=True,
     )
     core = gen_core(
         dir_path,

@@ -1,5 +1,10 @@
 def data_memory(core):
-    init = [("turn_jump_off", [{"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}])]
+    init = [
+        (
+            "turn_jump_off",
+            [{"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}],
+        )
+    ]
     # first instruction is infinite loop when jump condition is true
     init += [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
     init += [

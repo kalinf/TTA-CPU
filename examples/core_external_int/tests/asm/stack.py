@@ -1,5 +1,10 @@
 def stack(core):
-    init = [("turn_jump_off", [{"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}])]
+    init = [
+        (
+            "turn_jump_off",
+            [{"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}],
+        )
+    ]
     # first instruction is infinite loop when jump condition is true
     init += [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
     init += [
@@ -70,7 +75,7 @@ def stack(core):
                 {
                     "constant": 0,
                     "src_addr": core.Stack.outputs[1],
-                    "dst_addr": core.Result.inputs[0],
+                    "dst_addr": core.Result.inouts[0],
                 },
                 # decreaser
                 {
@@ -104,7 +109,7 @@ def stack(core):
                 {
                     "constant": 0,
                     "src_addr": core.Stack.inouts[0],
-                    "dst_addr": core.Result.inputs[0],
+                    "dst_addr": core.Result.inouts[0],
                 },
                 # repete if iterator > 0
                 {
@@ -125,7 +130,7 @@ def stack(core):
                 {
                     "constant": 0,
                     "src_addr": core.Stack.outputs[0],
-                    "dst_addr": core.Result.inputs[0],
+                    "dst_addr": core.Result.inouts[0],
                 },
             ],
         ),

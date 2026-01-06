@@ -4,7 +4,7 @@ import json
 from amaranth.sim import Simulator
 
 
-def base_asm_test(core, vcd_file, instr_memory_init, expected):
+def base_asm_test(core, vcd_file, expected):
     sim = Simulator(core)
     sim.add_clock(1e-6, domain="mem")
 

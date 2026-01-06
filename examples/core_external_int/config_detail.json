@@ -1,7 +1,7 @@
 {
     "name": "ExampleTTA",
     "word_size": 16,
-    "instruction_memory_depth": 100,
+    "instruction_memory_depth": 300,
     "instruction_memory_read_ports": 2,
     "data_memory_depth": 100,
     "functional_units": [
@@ -18,7 +18,7 @@
                 31
             ],
             "inout_address": [
-                22
+                21
             ]
         },
         {
@@ -37,8 +37,8 @@
                 32
             ],
             "inout_address": [
-                22,
-                24
+                21,
+                23
             ]
         },
         {
@@ -54,7 +54,7 @@
                 32
             ],
             "inout_address": [
-                26
+                25
             ]
         },
         {
@@ -70,7 +70,7 @@
                 33
             ],
             "inout_address": [
-                26
+                25
             ]
         },
         {
@@ -86,7 +86,7 @@
                 41
             ],
             "inout_address": [
-                26
+                25
             ]
         },
         {
@@ -105,7 +105,7 @@
                 42
             ],
             "inout_address": [
-                26
+                25
             ]
         },
         {
@@ -121,7 +121,7 @@
                 45
             ],
             "inout_address": [
-                27
+                26
             ]
         },
         {
@@ -137,7 +137,7 @@
                 47
             ],
             "inout_address": [
-                28
+                27
             ]
         },
         {
@@ -153,7 +153,7 @@
                 48
             ],
             "inout_address": [
-                28
+                27
             ]
         },
         {
@@ -173,7 +173,7 @@
                 48
             ],
             "inout_address": [
-                28
+                27
             ]
         },
         {
@@ -189,15 +189,15 @@
                 51
             ],
             "inout_address": [
-                28
+                27
             ]
         },
         {
             "name": "Result",
-            "inputs": 1,
+            "inputs": 0,
             "outputs": 0,
-            "inouts": 0,
-            "description": "Result register for debug purpose.",
+            "inouts": 1,
+            "description": "Function result register.",
             "input_address": [
                 21
             ],
@@ -205,7 +205,7 @@
                 51
             ],
             "inout_address": [
-                30
+                29
             ]
         },
         {
@@ -219,7 +219,7 @@
                 "leds"
             ],
             "input_address": [
-                22
+                21
             ],
             "output_address": [
                 51

@@ -28,11 +28,12 @@ def json2python(json_path):
     return program
 
 
-def prog2data(program, src_width, dest_width, data_width):
+def prog2data(program, src_width, dest_width, data_width, start_length):
     data = []
     if src_width + dest_width < data_width:
-        # at address 0x0 is program length
-        data.append({"data": len(program)})
+        # optionally at address 0x0 is program length
+        if start_length:
+            data.append({"data": len(program)})
         for instr in program:
             word = (
                 instr["dst_addr"] + (instr["src_addr"] << dest_width) + (instr["constant"] << (src_width + dest_width))
@@ -46,10 +47,12 @@ def prog2data(program, src_width, dest_width, data_width):
     return data
 
 
-def json_prog2json_data(prog_json_path, src_width, dest_width, data_width, data_json_path=None):
+def json_prog2json_data(prog_json_path, src_width, dest_width, data_width, data_json_path=None, start_length=False):
     with prog_json_path.open() as f:
         program = json.load(f)
-    data = prog2data(program=program, src_width=src_width, dest_width=dest_width, data_width=data_width)
+    data = prog2data(
+        program=program, src_width=src_width, dest_width=dest_width, data_width=data_width, start_length=start_length
+    )
 
     if data_json_path is not None:
         with data_json_path.open("w") as f:
@@ -65,7 +68,7 @@ if __name__ == "__main__":
         "-m",
         "--mode",
         default="python2json",
-        choices=["python2json", "json2python", "json2binary", "binary2json", "json_prog2json_data"],
+        choices=["python2json", "json2python", "json2binary", "binary2json", "json_prog2json_data", "data2json"],
         help="Selects operation to perform. Default: %(default)s",
     )
     parser.add_argument(
@@ -75,20 +78,22 @@ if __name__ == "__main__":
         help="Provide directory containing FUs and configuration file. Default: %(default)s",
     )
     parser.add_argument(
-        "--program-file",
-        default=str(Path(DEFAULT_CORE_PATH) / "program.json"),
-        help="Provide path to program file. Default: %(default)s",
+        "-s",
+        "--source-file",
+        default="",
+        help="Provide path to program file. Default: empty",
     )
     parser.add_argument(
-        "--data-file",
-        default=str(Path(DEFAULT_CORE_PATH) / "data.json"),
-        help="Provide path to data file. Default: %(default)s",
+        "-t",
+        "--target-file",
+        default="",
+        help="Provide path to data file. Default: empty",
     )
     parser.add_argument(
         "-f",
         "--function-name",
         default="program",
-        help="Name of function to import from program file. Default: %(default)s",
+        help="Name of function to import from given file. Default: %(default)s",
     )
     parser.add_argument(
         "-o",
@@ -96,25 +101,31 @@ if __name__ == "__main__":
         default=0,
         help="Offset of program file. Default: %(default)s",
     )
+    parser.add_argument(
+        "--start-length",
+        action="store_true",
+        help="Adds length at the beginning of data. Default: %(default)s",
+    )
 
     args = parser.parse_args()
 
     if args.mode == "python2json":
         core_model = build_addresses_core_model(Path(args.config_directory) / "config_detail.json")
-        func = import_function_from_file(args.program_file, args.function_name)
+        func = import_function_from_file(args.source_file, args.function_name)
         program = resolve_bb_labels(func(core_model), offset=int(args.offset))
-        json_path = Path(args.config_directory) / "program.json"
+        json_path = Path(args.target_file)
         with json_path.open("w") as f:
             json.dump(program, f, indent=4)
+        print(f"Program of length {len(program)} has been saved into {json_path}.")
     elif args.mode == "json2python":
-        print(json2python(Path(args.program_file).resolve()))
+        print(json2python(Path(args.source_file).resolve()))
     elif args.mode == "json2binary":
         ...
     elif args.mode == "binary2json":
         ...
     elif args.mode == "json_prog2json_data":
-        prog_json_path = Path(args.config_directory) / "program.json"
-        data_json_path = Path(args.config_directory) / "data.json"
+        prog_json_path = Path(args.source_file)
+        data_json_path = Path(args.target_file)
 
         configuration_path = Path(args.config_directory) / "config_detail.json"
         with configuration_path.open() as f:
@@ -126,4 +137,11 @@ if __name__ == "__main__":
             dest_width=configuration["dest_addr_width"],
             data_width=configuration["word_size"],
             data_json_path=data_json_path,
+            start_length=args.start_length,
         )
+    elif args.mode == "data2json":
+        data = import_function_from_file(args.source_file, args.function_name)
+        json_path = Path(args.target_file)
+        with json_path.open("w") as f:
+            json.dump(data, f, indent=4)
+        print(f"Data of length {len(data)} has been saved into {json_path}.")

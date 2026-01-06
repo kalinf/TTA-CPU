@@ -6,13 +6,14 @@ from core.registry import register_fu
 
 class Result(FU):
     """
-    Result register for debug purpose.
+    Function result register.
 
     Communication ports:
     ----------
-    1 Inputs:
+    0 Inputs:
     0 Outputs:
-    0 Inouts:
+    1 Inouts:
+        - 0: Result register
     """
 
     def __init__(

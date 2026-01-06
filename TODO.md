@@ -64,24 +64,23 @@ co przed wtorkiem [hehe na pewno]:
 - ~~osobne miejsce na ip cores niebędące fu~~
 - synchronizować domyślnie inputy??? jeżeli, to wypadałoby W JEDNYM MIEJSCU a nie w każdym fu
 - popraw skrypt formatujący
-- usunąć init z base_asm_test
+- ~~usunąć init z base_asm_test~~
 
 Priorytetowo:
 - ~~pamięć danych~~
 - ~~możliwe zwielokrotnianie FU~~
 - ~~modyfikator pamięci programu~~
 - ~~ładowanie programu z pamięci danych~~
-- wymyślić jak dobrze przesyłać po UART dane długości innej niż bajt
-- ustalenie ramki komunikacyjnej pamięci programu i danych (dla bootloadera)
-- bootloader
+- ~~ustalenie ramki komunikacyjnej pamięci programu i danych (dla bootloadera)~~
+- ~~bootloader~~
 - pll
 
 POTEM PRACA PISEMNA
 
 poprawki:
-- dowolne nazwy plików wychodzące z translatora
+- ~~dowolne nazwy plików wychodzące z translatora~~
 - testy żeby testowały
-- usunąć init z base_asm_test
+- ~~usunąć init z base_asm_test~~
 - popraw skrypt formatujący
 - dobra synchronizacja danych UART
 
@@ -97,6 +96,6 @@ co potem:
 - ~~komunikacja z komputerem~~
 
 pytania
-- programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
+- ~~programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)~~
 - czy regenerować pliki fu przy ponownym generowaniu rdzenia
 - ~~co z pytest i testami dla konkretnych konfiguracji~~

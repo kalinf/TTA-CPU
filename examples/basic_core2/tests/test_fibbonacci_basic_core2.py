@@ -84,7 +84,7 @@ def test_fib_no_loop_asm(core_address_model, dir_path, vcd_file, mock_resources,
     expected = fib(n)
     init = fibonacci_no_loop(core_address_model, n)
     core = gen_core(dir_path, init, resources=mock_resources)
-    base_asm_test(core=core, vcd_file=vcd_file, instr_memory_init=init, expected=expected)
+    base_asm_test(core=core, vcd_file=vcd_file, expected=expected)
 
 
 @pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
@@ -94,4 +94,4 @@ def test_fib_loop_asm(core_address_model, dir_path, vcd_file, mock_resources, n,
     init = asm_code(core_address_model, n)
     resolved_init = resolve_bb_labels(init)
     core = gen_core(dir_path, resolved_init, resources=mock_resources)
-    base_asm_test(core=core, vcd_file=vcd_file, instr_memory_init=init, expected=expected)
+    base_asm_test(core=core, vcd_file=vcd_file, expected=expected)
