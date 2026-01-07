@@ -5,6 +5,7 @@
   "minimal_constant_size": 7,
   "instruction_memory_depth": 100,
   "instruction_memory_read_ports": 2,
+  "data_memory_depth": 100,
   "functional_units": [
     {
       "name": "Adder",

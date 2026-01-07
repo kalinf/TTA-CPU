@@ -85,7 +85,11 @@ def gen_core(directory: Path, instr_memory_init=[], data_memory_init=[], synthes
             FUs=fu_partial,
             instr_memory_depth=configuration["instruction_memory_depth"],
             instr_memory_init=instr_memory_init,
-            instr_memory_rports=configuration["instruction_memory_read_ports"],
+            instr_memory_rports=(
+                configuration["instruction_memory_read_ports"]
+                if "instruction_memory_read_ports" in configuration
+                else 1
+            ),
             data_memory_depth=configuration["data_memory_depth"],
             data_memory_init=data_memory_init,
             synthesis=synthesis,
@@ -100,7 +104,11 @@ def gen_core(directory: Path, instr_memory_init=[], data_memory_init=[], synthes
             FUs=fu_partial,
             instr_memory_depth=configuration["instruction_memory_depth"],
             instr_memory_init=instr_memory_init,
-            instr_memory_rports=configuration["instruction_memory_read_ports"],
+            instr_memory_rports=(
+                configuration["instruction_memory_read_ports"]
+                if "instruction_memory_read_ports" in configuration
+                else 1
+            ),
             data_memory_depth=configuration["data_memory_depth"],
             data_memory_init=data_memory_init,
             synthesis=synthesis,

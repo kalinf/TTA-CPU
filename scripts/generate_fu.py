@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import json
+import argparse
 from pathlib import Path
 from typing import Iterable
 
@@ -97,6 +98,9 @@ RESOURCE_SIGNAL_DECLARATION = """{resource} = Signal.like(self.resources["{resou
 COMBINATIONAL = """m.d.comb += [{assignments}]"""
 
 RESOURCE_ASSIGNMENT = """{signal0}.eq({signal1}),"""
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "basic_core").resolve()
 
 
 def get_rsrc(resources, name):
@@ -202,19 +206,28 @@ def generate_fu(
 
 
 def main():
-    if not len(sys.argv) in {2, 3}:
-        print("Usage: python3 generate_fu.py <directory> [<config_file>]")
-        sys.exit(1)
-
-    target_dir = Path(sys.argv[1]).resolve()
-    config_path = Path(sys.argv[2]).resolve() if len(sys.argv) == 3 else (target_dir / "config.json")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-d",
+        "--config-directory",
+        default=str(DEFAULT_CORE_PATH),
+        help="Provide directory containing FUs and configuration file. Default: %(default)s",
+    )
+    parser.add_argument(
+        "--config-path",
+        default="",
+        help="Provide configuration file. Default: %(default)s",
+    )
+    args = parser.parse_args()
+    target_dir = Path(args.config_directory).resolve()
+    config_path = Path(args.config_path).resolve() if args.config_path != "" else (target_dir / "config.json")
     fu_dir = target_dir / "fu"
     fu_dir.mkdir(exist_ok=True)
 
     with config_path.open() as f:
         configuration = json.load(f)
 
-    resources = configuration["resources"]
+    resources = configuration["resources"] if "resources" in configuration else []
     input_count = 1  # address 0 is reserved and contains 0
     output_count = 0
     inout_count = 0
@@ -250,16 +263,20 @@ def main():
             output_count += f_unit["outputs"]
     configuration["src_addr_width"] = src_addr_width = max(
         (output_count + inout_count).bit_length(),
-        min(configuration["minimal_constant_size"], configuration["word_size"]),
+        (
+            min(configuration["minimal_constant_size"], configuration["word_size"])
+            if "minimal_constant_size" in configuration
+            else configuration["word_size"]
+        ),
     )
     configuration["dest_addr_width"] = dest_addr_width = (input_count + inout_count).bit_length()
     configuration["src_addr_width"] += (
         (1 << (src_addr_width + dest_addr_width).bit_length()) - src_addr_width - dest_addr_width - 1
-        if configuration["i_really_like_powers_of_2"]
+        if ("i_really_like_powers_of_2" in configuration and configuration["i_really_like_powers_of_2"])
         else 0
     )
-    configuration.pop("i_really_like_powers_of_2")
-    configuration.pop("minimal_constant_size")
+    configuration.pop("i_really_like_powers_of_2", None)
+    configuration.pop("minimal_constant_size", None)
 
     config_detail_path = target_dir / "config_detail.json"
     with config_detail_path.open(mode="w", encoding="utf-8") as f:

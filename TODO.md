@@ -89,7 +89,7 @@ jeśli zdążę to potem:
 - przywracanie stanu w handlerach (przykład - jednoczesne uart echo i wandering led)
 
 co potem:
-- bootloader, programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)
+- ~~bootloader, programowanie pamięci bez wgrywania rdzeni (jak to z tą pamięcią co jest layoutem)~~
 - częściowo pipelined [NIE ZDĄŻĘ, ODPADA]
 - wiele możliwych szyn instrukcji (VLIV)
 - wiele możliwych szyn danych (przerwania między jednostkami)
