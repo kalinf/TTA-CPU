@@ -61,10 +61,7 @@ class Looper(FU):
         with m.If((self.instr_bus.data.dst_addr == self.inputs[0]["addr"])):
             m.d.falling += self.outputs[0]["data"].eq(fresh_data)
 
-        with m.If(
-            (self.instr_bus.data.src_addr == self.outputs[0]["addr"])
-            & ~self.instr_bus.data.constant
-        ):
+        with m.If((self.instr_bus.data.src_addr == self.outputs[0]["addr"]) & ~self.instr_bus.data.constant):
             m.d.falling += self.outputs[0]["data"].eq(
                 Mux(
                     next_value <= self.inputs[1]["data"],

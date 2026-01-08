@@ -42,9 +42,7 @@ class ProgMemory(FU):
         )
 
         self.instruction_memory_depth = instruction_memory_depth
-        self.instr_write_port = WritePort(
-            depth=instruction_memory_depth, shape=self.instr_bus.data.shape()
-        )
+        self.instr_write_port = WritePort(depth=instruction_memory_depth, shape=self.instr_bus.data.shape())
 
     def elaborate(self, platform):
         m = super().elaborate(platform)

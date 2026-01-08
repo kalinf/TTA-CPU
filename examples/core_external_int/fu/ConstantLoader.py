@@ -50,11 +50,7 @@ class ConstantLoader(FU):
         m.d.comb += self.outputs[0]["data"].eq(
             Cat(
                 self.inputs[0]["data"][0 : len(self.instr_bus.data.src_addr)],
-                self.inputs[1]["data"][
-                    0 : (
-                        len(self.data_bus.data.data) - len(self.instr_bus.data.src_addr)
-                    )
-                ],
+                self.inputs[1]["data"][0 : (len(self.data_bus.data.data) - len(self.instr_bus.data.src_addr))],
             )
         )
 

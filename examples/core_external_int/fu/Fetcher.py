@@ -139,12 +139,8 @@ class Fetcher(FU):
             m.d.comb += final_instr.dst_addr.eq(taken_instr.dst_addr)
 
         m.d.falling += [
-            self.instr_bus.data.eq(
-                Mux(unclicked_delayed, following_instr, final_instr)
-            ),
-            self.outputs[2]["data"].eq(
-                Mux(unclicked_delayed, following_addr, taken_addr)
-            ),
+            self.instr_bus.data.eq(Mux(unclicked_delayed, following_instr, final_instr)),
+            self.outputs[2]["data"].eq(Mux(unclicked_delayed, following_addr, taken_addr)),
             following_addr.eq(
                 Mux(
                     unclicked,

@@ -55,9 +55,7 @@ class Pins(FU):
         ]
         # here you can react on writes into trigger addresses
 
-        m.submodules += FFSynchronizer(
-            button, self.outputs[0]["data"], o_domain="falling"
-        )
+        m.submodules += FFSynchronizer(button, self.outputs[0]["data"], o_domain="falling")
 
         m.d.comb += leds.eq(self.inouts[0]["data"])
 

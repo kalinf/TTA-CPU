@@ -46,10 +46,7 @@ class Stack(FU):
         depth = 16
 
         # inout register is stage 0
-        stack = [
-            Signal().like(self.data_bus.data.data, name=f"stack_stage{i}")
-            for i in range(1, depth)
-        ]
+        stack = [Signal().like(self.data_bus.data.data, name=f"stack_stage{i}") for i in range(1, depth)]
         level = Signal(range(depth + 1))
         empty = Signal(init=1)
         full = Signal()

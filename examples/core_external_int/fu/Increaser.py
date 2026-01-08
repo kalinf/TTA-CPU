@@ -44,13 +44,8 @@ class Increaser(FU):
 
         # here you can react on writes into trigger addresses
         # here place your code, for example:
-        with m.If(
-            (self.instr_bus.data.src_addr == self.inouts[0]["addr"])
-            & ~self.instr_bus.data.constant
-        ):
-            m.d.falling += self.inouts[0]["data"].eq(
-                self.inouts[0]["data"] + self.inouts[1]["data"]
-            )
+        with m.If((self.instr_bus.data.src_addr == self.inouts[0]["addr"]) & ~self.instr_bus.data.constant):
+            m.d.falling += self.inouts[0]["data"].eq(self.inouts[0]["data"] + self.inouts[1]["data"])
 
         return m
 

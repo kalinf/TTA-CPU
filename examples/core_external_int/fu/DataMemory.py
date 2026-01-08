@@ -44,12 +44,8 @@ class DataMemory(FU):
         )
 
         self.data_memory_depth = data_memory_depth
-        self.data_read_port = ReadPort(
-            depth=data_memory_depth, shape=self.data_bus.data.shape()
-        )
-        self.data_write_port = WritePort(
-            depth=data_memory_depth, shape=self.data_bus.data.shape()
-        )
+        self.data_read_port = ReadPort(depth=data_memory_depth, shape=self.data_bus.data.shape())
+        self.data_write_port = WritePort(depth=data_memory_depth, shape=self.data_bus.data.shape())
 
     def elaborate(self, platform):
         m = super().elaborate(platform)

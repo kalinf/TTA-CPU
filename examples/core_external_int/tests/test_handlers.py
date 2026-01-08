@@ -24,9 +24,7 @@ def ping_pong(array):
 
 
 @pytest.mark.parametrize("asm_code", [wandering_led])
-def test_wandering_led_asm(
-    core_address_model, dir_path, vcd_file, mock_resources, asm_code
-):
+def test_wandering_led_asm(core_address_model, dir_path, vcd_file, mock_resources, asm_code):
     init = asm_code(core_address_model)
     resolved_init = resolve_bb_labels(init)
     core = gen_core(dir_path, resolved_init, resources=mock_resources)

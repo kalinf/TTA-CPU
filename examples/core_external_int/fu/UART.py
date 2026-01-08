@@ -55,9 +55,7 @@ class UART(FU):
             self.resources["uart_tx"].o.eq(uart_tx),
         ]
 
-        m.submodules.UARTTranceiver = UARTTranceiver = IP_REGISTRY["UARTTranceiver"](
-            baud_rate=115200
-        )
+        m.submodules.UARTTranceiver = UARTTranceiver = IP_REGISTRY["UARTTranceiver"](baud_rate=115200)
 
         rx_data = Signal(8)
         rx_ready_pulse = Signal()

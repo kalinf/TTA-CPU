@@ -20,22 +20,16 @@ def test_stack(
     expected = reversed(list(range(1, 16 + 1)))
 
     async def tb(ctx):
-        while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(
-            core.Result.inouts[0]["addr"]
-        ):
+        while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(core.Result.inouts[0]["addr"]):
             await ctx.tick(domain="falling")
         await ctx.tick(domain="falling")
         assert ctx.get(core.Result.inouts[0]["data"]) == 1
         for elem in expected:
-            while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(
-                core.Result.inouts[0]["addr"]
-            ):
+            while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(core.Result.inouts[0]["addr"]):
                 await ctx.tick(domain="falling")
             await ctx.tick(domain="falling")
             assert ctx.get(core.Result.inouts[0]["data"]) == elem
-        while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(
-            core.Result.inouts[0]["addr"]
-        ):
+        while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(core.Result.inouts[0]["addr"]):
             await ctx.tick(domain="falling")
         await ctx.tick(domain="falling")
         assert ctx.get(core.Result.inouts[0]["data"]) == 1
