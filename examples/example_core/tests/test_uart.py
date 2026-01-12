@@ -2,7 +2,7 @@ import pytest
 from amaranth import *
 from amaranth.sim import Simulator
 from utils.utils import resolve_bb_labels
-from examples.core_external_int.tests.asm.uart import uart_echo
+from examples.example_core.tests.asm.uart import uart_echo
 from core.generate_core import gen_core
 
 

@@ -3,9 +3,10 @@ from amaranth import *
 from amaranth.sim import Simulator
 from tests.utils import base_asm_test
 from utils.utils import resolve_bb_labels
-from examples.basic_core.tests.asm.fibonacci import (
+from examples.example_core.tests.asm.fibonacci import (
     fibonacci_no_loop,
     fibonacci_loop_direct,
+    fibonacci_loop_indirect,
 )
 from core.generate_core import gen_core
 
@@ -87,9 +88,12 @@ def test_fib_no_loop_asm(core_address_model, dir_path, vcd_file, mock_resources,
 
 
 @pytest.mark.parametrize("n", [0, 1, 2, 5, 10])
-def test_fib_loop_direct_asm(core_address_model, dir_path, vcd_file, mock_resources, n):
+@pytest.mark.parametrize("asm_code", [fibonacci_loop_direct, fibonacci_loop_indirect])
+def test_fib_loop_asm(core_address_model, dir_path, vcd_file, mock_resources, n, asm_code):
     expected = fib(n)
-    init = fibonacci_loop_direct(core_address_model, n)
+    init = asm_code(core_address_model, n)
     resolved_init = resolve_bb_labels(init)
+    for i, instruction in enumerate(resolved_init):
+        print(i, instruction)
     core = gen_core(dir_path, resolved_init, resources=mock_resources)
     base_asm_test(core=core, vcd_file=vcd_file, expected=expected)

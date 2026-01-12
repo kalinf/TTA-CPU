@@ -9,10 +9,11 @@ def base_asm_test(core, vcd_file, expected):
     sim.add_clock(1e-6, domain="mem")
 
     async def tb(ctx):
-        # while ctx.get(core.instr_bus.data["dst_addr"]) != core.Result.inputs[0]["addr"].value:
+        # while ctx.get(core.instr_bus.data.dst_addr) != ctx.get(core.Result.inouts[0]["addr"]):
+        #     await ctx.tick(domain="falling")
         # await ctx.tick(domain="falling")
         await ctx.tick(domain="falling").repeat(1000)
-        result = ctx.get(core.Result.inputs[0]["data"])
+        result = ctx.get(core.Result.inouts[0]["data"])
         assert result == expected
 
     sim.add_testbench(tb)

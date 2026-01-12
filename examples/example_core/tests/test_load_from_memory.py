@@ -3,10 +3,10 @@ import json
 from amaranth import *
 from amaranth.sim import Simulator
 from utils.utils import resolve_bb_labels
-from examples.core_external_int.tests.asm.load_program_from_memory import (
+from examples.example_core.tests.asm.load_program_from_memory import (
     bootloader_data_memory,
 )
-from examples.core_external_int.tests.asm.data_memory import data_memory
+from examples.example_core.tests.asm.data_memory import data_memory
 from core.generate_core import gen_core
 from scripts.translator import prog2data
 

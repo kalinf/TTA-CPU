@@ -9,7 +9,7 @@ from core.utils.resources import create_resources, add_resources, get_requested_
 from scripts.translator import json2python
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "basic_core").resolve()
+DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "example_core").resolve()
 
 
 class Top(Elaboratable):

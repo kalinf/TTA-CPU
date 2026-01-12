@@ -37,9 +37,9 @@
     },
     {
       "name": "Result",
-      "inputs": 1,
+      "inputs": 0,
       "outputs": 0,
-      "inouts": 0,
+      "inouts": 1,
       "description": "Result register for debug purpose."
     }
   ]

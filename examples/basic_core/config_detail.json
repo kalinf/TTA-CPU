@@ -18,7 +18,7 @@
                 13
             ],
             "inout_address": [
-                11
+                10
             ]
         },
         {
@@ -34,7 +34,7 @@
                 14
             ],
             "inout_address": [
-                11
+                10
             ]
         },
         {
@@ -50,7 +50,7 @@
                 14
             ],
             "inout_address": [
-                13
+                12
             ]
         },
         {
@@ -66,14 +66,14 @@
                 20
             ],
             "inout_address": [
-                13
+                12
             ]
         },
         {
             "name": "Result",
-            "inputs": 1,
+            "inputs": 0,
             "outputs": 0,
-            "inouts": 0,
+            "inouts": 1,
             "description": "Result register for debug purpose.",
             "input_address": [
                 10
@@ -82,7 +82,7 @@
                 22
             ],
             "inout_address": [
-                13
+                12
             ]
         }
     ],

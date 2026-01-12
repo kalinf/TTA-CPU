@@ -100,7 +100,7 @@ COMBINATIONAL = """m.d.comb += [{assignments}]"""
 RESOURCE_ASSIGNMENT = """{signal0}.eq({signal1}),"""
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "basic_core").resolve()
+DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "example_core").resolve()
 
 
 def get_rsrc(resources, name):

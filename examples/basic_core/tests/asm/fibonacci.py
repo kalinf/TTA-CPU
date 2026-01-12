@@ -19,7 +19,7 @@ def fibonacci_no_loop(core, n: int):
         {
             "constant": 0,
             "src_addr": core.Adder.outputs[0],
-            "dst_addr": core.Result.inputs[0],
+            "dst_addr": core.Result.inouts[0],
         }
     ]
     return init
@@ -114,7 +114,7 @@ def fibonacci_loop(core, n: int, loop, extra_preparation=[]):
                     "dst_addr": core.Fetcher.inputs[0],
                 },
                 # edge case for n == 0
-                {"constant": 1, "src_addr": 0, "dst_addr": core.Result.inputs[0]},
+                {"constant": 1, "src_addr": 0, "dst_addr": core.Result.inouts[0]},
                 # jump to end and lock
                 {"constant": 1, "src_addr": "end", "dst_addr": core.Fetcher.inputs[1]},
                 {"constant": 1, "src_addr": 1, "dst_addr": core.Fetcher.inputs[0]},
@@ -167,7 +167,7 @@ def fibonacci_loop(core, n: int, loop, extra_preparation=[]):
                 {
                     "constant": 0,
                     "src_addr": core.Adder.outputs[0],
-                    "dst_addr": core.Result.inputs[0],
+                    "dst_addr": core.Result.inouts[0],
                 },
                 # jump to end and lock
                 {"constant": 1, "src_addr": "end", "dst_addr": core.Fetcher.inputs[1]},

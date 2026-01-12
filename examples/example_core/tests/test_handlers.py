@@ -2,7 +2,7 @@ import pytest
 from amaranth import *
 from amaranth.sim import Simulator
 from utils.utils import resolve_bb_labels
-from examples.core_external_int.tests.asm.handlers import wandering_led
+from examples.example_core.tests.asm.handlers import wandering_led
 from core.generate_core import gen_core
 
 wandering = [0b1, 0b10, 0b100, 0b1000, 0b10000]

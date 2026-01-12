@@ -3,10 +3,10 @@ import json
 from amaranth import *
 from amaranth.sim import Simulator
 from utils.utils import resolve_bb_labels
-from examples.core_external_int.tests.asm.bootloaderUART import bootloaderUART
-from examples.core_external_int.tests.asm.uart import uart_echo
-from examples.core_external_int.tests.test_uart import uart_transmit, to_binary
-from examples.core_external_int.tests.data.bootloader_data import bootloader_data
+from examples.example_core.tests.asm.bootloaderUART import bootloaderUART
+from examples.example_core.tests.asm.uart import uart_echo
+from examples.example_core.tests.test_uart import uart_transmit, to_binary
+from examples.example_core.tests.data.bootloader_data import bootloader_data
 from core.generate_core import gen_core
 from scripts.translator import prog2data
 

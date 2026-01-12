@@ -5,7 +5,7 @@ from utils.utils import build_addresses_core_model
 from tests.utils import mock_resources as _mock_resources
 
 CONFTEST_DIR = Path(__file__).resolve().parent
-DEFAULT_CORE_PATH = (CONFTEST_DIR / ".." / "examples" / "basic_core").resolve()
+DEFAULT_CORE_PATH = (CONFTEST_DIR / ".." / "examples" / "example_core").resolve()
 
 
 def pytest_addoption(parser):

@@ -6,7 +6,7 @@ from pathlib import Path
 from utils.utils import build_addresses_core_model, resolve_bb_labels
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "basic_core").resolve()
+DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "example_core").resolve()
 
 
 def import_function_from_file(file_path, function_name):
