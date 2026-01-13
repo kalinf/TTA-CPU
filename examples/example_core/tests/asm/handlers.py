@@ -1,6 +1,11 @@
 def handlers_base(core, handler=[], prep=[]):
-    init = []
-    # first instruction is infinite loop when jump condition is true
+    init = [
+        (
+            "turn_jumping_off",
+            [{"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}],
+        )
+    ]
+    # this instruction is infinite loop when jump condition is true
     init += [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
     init += [
         (
@@ -42,12 +47,12 @@ def wandering_led_prep(core):
                 # value in register indicates direction
                 {
                     "constant": 1,
-                    "src_addr": 0b1111111111,
+                    "src_addr": 0b111111111,
                     "dst_addr": core.ConstantLoader.inputs[0],
                 },
                 {
                     "constant": 1,
-                    "src_addr": 0b1111111111,
+                    "src_addr": 0b111111111,
                     "dst_addr": core.ConstantLoader.inputs[1],
                 },
                 {
