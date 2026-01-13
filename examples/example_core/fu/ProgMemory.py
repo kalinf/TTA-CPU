@@ -49,9 +49,17 @@ class ProgMemory(FU):
 
         m.d.comb += [
             self.instr_write_port.addr.eq(self.inputs[0]["data"]),
-            self.instr_write_port.data.constant.eq(self.inputs[1]["data"][15]),
-            self.instr_write_port.data.src_addr.eq(self.inputs[1]["data"][5:15]),
-            self.instr_write_port.data.dst_addr.eq(self.inputs[1]["data"][0:5]),
+            self.instr_write_port.data.constant.eq(
+                self.inputs[1]["data"][(len(self.instr_bus.data.dst_addr) + len(self.instr_bus.data.src_addr))]
+            ),
+            self.instr_write_port.data.src_addr.eq(
+                self.inputs[1]["data"][
+                    len(self.instr_bus.data.dst_addr) : (
+                        len(self.instr_bus.data.dst_addr) + len(self.instr_bus.data.src_addr)
+                    )
+                ]
+            ),
+            self.instr_write_port.data.dst_addr.eq(self.inputs[1]["data"][0 : len(self.instr_bus.data.dst_addr)]),
         ]
 
         with m.If(self.instr_bus.data.dst_addr == self.inputs[1]["addr"]):
