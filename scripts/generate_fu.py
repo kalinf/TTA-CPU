@@ -228,17 +228,17 @@ def main():
         configuration = json.load(f)
 
     resources = configuration["resources"] if "resources" in configuration else []
-    input_count = 1  # address 0 is reserved and contains 0
+    input_count = 0
     output_count = 0
-    inout_count = 0
+    inout_count = 1  # address 0 is reserved and contains 0
     for f_unit in configuration["functional_units"]:
         instances = f_unit["instances"] if "instances" in f_unit else 1
         f_unit["input_address"] = [None] * instances
         f_unit["output_address"] = [None] * instances
         f_unit["inout_address"] = [None] * instances
         for i in range(instances):
-            f_unit["input_address"][i] = input_count
-            input_count += f_unit["inputs"]
+            f_unit["inout_address"][i] = inout_count
+            inout_count += f_unit["inouts"]
         generate_fu(
             fu_dir,
             f_unit["name"],
@@ -254,22 +254,20 @@ def main():
     for f_unit in configuration["functional_units"]:
         instances = f_unit["instances"] if "instances" in f_unit else 1
         for i in range(instances):
-            f_unit["inout_address"][i] = input_count + inout_count
-            inout_count += f_unit["inouts"]
-    for f_unit in configuration["functional_units"]:
-        instances = f_unit["instances"] if "instances" in f_unit else 1
-        for i in range(instances):
-            f_unit["output_address"][i] = input_count + inout_count + output_count
+            f_unit["input_address"][i] = inout_count + input_count
+            input_count += f_unit["inputs"]
+            f_unit["output_address"][i] = inout_count + output_count
             output_count += f_unit["outputs"]
     configuration["src_addr_width"] = src_addr_width = max(
-        (output_count + inout_count).bit_length(),
+        (inout_count + output_count).bit_length(),
         (
+            # constant longer than word size is not useful
             min(configuration["minimal_constant_size"], configuration["word_size"])
             if "minimal_constant_size" in configuration
-            else configuration["word_size"]
+            else 0
         ),
     )
-    configuration["dest_addr_width"] = dest_addr_width = (input_count + inout_count).bit_length()
+    configuration["dest_addr_width"] = dest_addr_width = (inout_count + input_count).bit_length()
     configuration["src_addr_width"] += (
         (1 << (src_addr_width + dest_addr_width).bit_length()) - src_addr_width - dest_addr_width - 1
         if ("i_really_like_powers_of_2" in configuration and configuration["i_really_like_powers_of_2"])
@@ -281,9 +279,6 @@ def main():
     config_detail_path = target_dir / "config_detail.json"
     with config_detail_path.open(mode="w", encoding="utf-8") as f:
         json.dump(configuration, f, ensure_ascii=False)
-
-    # odpal tutaj formatting
-
 
 if __name__ == "__main__":
     main()

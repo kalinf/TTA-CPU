@@ -1,5 +1,5 @@
 {
-  "name": "ExampleTTA",
+  "name": "SimpleTTA",
   "i_really_like_powers_of_2": true,
   "word_size": 16,
   "minimal_constant_size": 7,
@@ -30,8 +30,8 @@
     },
     {
       "name": "Fetcher",
-      "inputs": 4,
-      "outputs": 2,
+      "inputs": 2,
+      "outputs": 0,
       "inouts": 0,
       "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations."
     },

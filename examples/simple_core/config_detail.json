@@ -1,5 +1,5 @@
 {
-    "name": "ExampleTTA",
+    "name": "SimpleTTA",
     "word_size": 16,
     "instruction_memory_depth": 100,
     "instruction_memory_read_ports": 2,
@@ -12,13 +12,13 @@
             "inouts": 0,
             "description": "Adds the operands.",
             "input_address": [
-                1
+                4
             ],
             "output_address": [
-                13
+                4
             ],
             "inout_address": [
-                10
+                1
             ]
         },
         {
@@ -28,13 +28,13 @@
             "inouts": 2,
             "description": "Increments the main value by another value during each readout.",
             "input_address": [
-                3
+                6
             ],
             "output_address": [
-                14
+                5
             ],
             "inout_address": [
-                10
+                1
             ]
         },
         {
@@ -44,29 +44,29 @@
             "inouts": 0,
             "description": "Logical operations.",
             "input_address": [
-                3
+                6
             ],
             "output_address": [
-                14
+                5
             ],
             "inout_address": [
-                12
+                3
             ]
         },
         {
             "name": "Fetcher",
-            "inputs": 4,
-            "outputs": 2,
+            "inputs": 2,
+            "outputs": 0,
             "inouts": 0,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations.",
             "input_address": [
-                6
+                9
             ],
             "output_address": [
-                20
+                11
             ],
             "inout_address": [
-                12
+                3
             ]
         },
         {
@@ -76,13 +76,13 @@
             "inouts": 1,
             "description": "Result register for debug purpose.",
             "input_address": [
-                10
+                11
             ],
             "output_address": [
-                22
+                11
             ],
             "inout_address": [
-                12
+                3
             ]
         }
     ],

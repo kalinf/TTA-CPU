@@ -132,7 +132,7 @@ def loop_indirect(core):
                 {
                     "constant": 0,
                     "src_addr": core.Adder.outputs[0],
-                    "dst_addr": core.Fetcher.outputs[1],
+                    "dst_addr": core.Fetcher.inouts[2],
                 },
                 {
                     "constant": 0,

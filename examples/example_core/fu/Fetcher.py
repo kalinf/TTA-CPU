@@ -17,12 +17,12 @@ class Fetcher(FU):
         - 1: jump address
         - 2: indirect source address
         - 3: indirect destination address
-    2 Outputs:
-        - 0: indirect source address
-        - 1: indirect destination address
-        - 2: program counter
-    1 Inouts:
+    1 Outputs:
+        - 0: program counter
+    3 Inouts:
         - 0: address of interrupt handler
+        - 1: indirect source address
+        - 2: indirect destination address
     """
 
     def __init__(
@@ -119,10 +119,11 @@ class Fetcher(FU):
         ]
 
         # Indirect part
-        # odczyt powoduje nadpisanie adresu jednostki wartością przechowywaną
+        # read causes overwerite of instruction's source/destination address with stored value
+        # indirect source cannot be used as constant
         final_instr = Signal().like(self.instr_bus.data, name="final_instr")
         m.d.comb += final_instr.constant.eq(taken_instr.constant)
-        with m.If(taken_instr.src_addr == self.outputs[0]["addr"]):
+        with m.If((taken_instr.src_addr == self.inouts[1]["addr"]) & ~taken_instr.constant):
             with m.If(self.instr_bus.data.dst_addr == self.inputs[2]["addr"]):
                 m.d.comb += final_instr.src_addr.eq(self.data_bus.data.data)
             with m.Else():
@@ -130,7 +131,7 @@ class Fetcher(FU):
         with m.Else():
             m.d.comb += final_instr.src_addr.eq(taken_instr.src_addr)
 
-        with m.If(taken_instr.dst_addr == self.outputs[1]["addr"]):
+        with m.If(taken_instr.dst_addr == self.inouts[2]["addr"]):
             with m.If(self.instr_bus.data.dst_addr == self.inputs[3]["addr"]):
                 m.d.comb += final_instr.dst_addr.eq(self.data_bus.data.data)
             with m.Else():
@@ -140,7 +141,7 @@ class Fetcher(FU):
 
         m.d.falling += [
             self.instr_bus.data.eq(Mux(unclicked_delayed, following_instr, final_instr)),
-            self.outputs[2]["data"].eq(Mux(unclicked_delayed, following_addr, taken_addr)),
+            self.outputs[0]["data"].eq(Mux(unclicked_delayed, following_addr, taken_addr)),
             following_addr.eq(
                 Mux(
                     unclicked,

@@ -45,7 +45,7 @@ def save_return_address_instr(core):
         },
         {
             "constant": 0,
-            "src_addr": core.Fetcher.outputs[2],
+            "src_addr": core.Fetcher.outputs[0],
             "dst_addr": core.Adder.inputs[1],
         },
         {

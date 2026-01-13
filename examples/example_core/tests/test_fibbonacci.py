@@ -93,7 +93,5 @@ def test_fib_loop_asm(core_address_model, dir_path, vcd_file, mock_resources, n,
     expected = fib(n)
     init = asm_code(core_address_model, n)
     resolved_init = resolve_bb_labels(init)
-    for i, instruction in enumerate(resolved_init):
-        print(i, instruction)
     core = gen_core(dir_path, resolved_init, resources=mock_resources)
     base_asm_test(core=core, vcd_file=vcd_file, expected=expected)

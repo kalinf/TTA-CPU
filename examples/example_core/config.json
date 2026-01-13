@@ -46,8 +46,8 @@
         {
             "name": "Fetcher",
             "inputs": 4,
-            "outputs": 3,
-            "inouts": 1,
+            "outputs": 1,
+            "inouts": 3,
             "description": "Drives instruction bus: Fetches correct instruction from instruction memory and does the indirect operations. Handles external interrupts.",
             "resources": [
                 "button"

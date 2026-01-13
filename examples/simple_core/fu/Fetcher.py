@@ -11,14 +11,10 @@ class Fetcher(FU):
 
     Communication ports:
     ----------
-    4 Inputs:
+    2 Inputs:
         - 0: jump condition (if any bit is set, jump is taken)
         - 1: jump address
-        - 2: indirect source address
-        - 3: indirect destination address
-    2 Outputs:
-        - 0: indirect source address
-        - 1: indirect destination address
+    0 Outputs:
     0 Inouts:
     """
 
@@ -55,17 +51,6 @@ class Fetcher(FU):
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
-        # Common part
-        fresh_data = Signal.like(self.data_bus.data.data, name="fresh_data")
-        m.d.comb += fresh_data.eq(
-            Mux(
-                ~self.instr_bus.data.constant,
-                self.data_bus.data.data,
-                self.instr_bus.data.src_addr,
-            )
-        )
-
-        # Fetcher part
         jump_condition = Signal()
         following_addr = Signal().like(self.data_bus.data.data, name="following_addr")
         jump_addr = Signal().like(self.data_bus.data.data, name="jump_addr")
@@ -77,7 +62,7 @@ class Fetcher(FU):
             jump_condition.eq(
                 Mux(
                     self.instr_bus.data.dst_addr == self.inputs[0]["addr"],
-                    fresh_data,
+                    Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr),
                     self.inputs[0]["data"],
                 ).any()
             ),
@@ -96,28 +81,8 @@ class Fetcher(FU):
             self.instr_read_ports[1].addr.eq(jump_addr),
         ]
 
-        # Indirect part
-        # odczyt powoduje nadpisanie adresu jednostki wartością przechowywaną
-        final_instr = Signal().like(self.instr_bus.data, name="final_instr")
-        m.d.comb += final_instr.constant.eq(taken_instr.constant)
-        with m.If(taken_instr.src_addr == self.outputs[0]["addr"]):
-            with m.If(self.instr_bus.data.dst_addr == self.inputs[2]["addr"]):
-                m.d.comb += final_instr.src_addr.eq(fresh_data)
-            with m.Else():
-                m.d.comb += final_instr.src_addr.eq(self.inputs[2]["data"])
-        with m.Else():
-            m.d.comb += final_instr.src_addr.eq(taken_instr.src_addr)
-
-        with m.If(taken_instr.dst_addr == self.outputs[1]["addr"]):
-            with m.If(self.instr_bus.data.dst_addr == self.inputs[3]["addr"]):
-                m.d.comb += final_instr.dst_addr.eq(fresh_data)
-            with m.Else():
-                m.d.comb += final_instr.dst_addr.eq(self.inputs[3]["data"])
-        with m.Else():
-            m.d.comb += final_instr.dst_addr.eq(taken_instr.dst_addr)
-
         m.d.falling += [
-            self.instr_bus.data.eq(final_instr),
+            self.instr_bus.data.eq(taken_instr),
             following_addr.eq(taken_addr + 1),
         ]
 

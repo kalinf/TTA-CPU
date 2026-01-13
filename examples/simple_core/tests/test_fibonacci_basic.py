@@ -3,7 +3,7 @@ from amaranth import *
 from amaranth.sim import Simulator
 from tests.utils import base_asm_test
 from utils.utils import resolve_bb_labels
-from examples.basic_core.tests.asm.fibonacci import (
+from examples.simple_core.tests.asm.fibonacci import (
     fibonacci_no_loop,
     fibonacci_loop_direct,
 )
