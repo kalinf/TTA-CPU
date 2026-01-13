@@ -57,12 +57,12 @@ class Stack(FU):
             self.outputs[1]["data"].eq(full),
         ]
         with m.If(self.instr_bus.data.dst_addr == self.inouts[0]["addr"]):
-            with m.If(self.instr_bus.data.src_addr != self.inouts[0]["addr"]):
+            with m.If((self.instr_bus.data.src_addr != self.inouts[0]["addr"]) | self.instr_bus.data.constant):
                 m.d.falling += level.eq(Mux(level < depth, level + 1, depth))
                 for i in range(1, depth - 1):
                     m.d.falling += stack[i].eq(stack[i - 1])
                 m.d.falling += stack[0].eq(self.inouts[0]["data"])
-        with m.Elif(self.instr_bus.data.src_addr == self.inouts[0]["addr"]):
+        with m.Elif((self.instr_bus.data.src_addr == self.inouts[0]["addr"]) & ~self.instr_bus.data.constant):
             m.d.falling += level.eq(Mux(level > 0, level - 1, 0))
             for i in range(depth - 2):
                 m.d.falling += stack[i].eq(stack[i + 1])
