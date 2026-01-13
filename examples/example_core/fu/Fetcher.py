@@ -66,7 +66,7 @@ class Fetcher(FU):
             button.eq(self.resources["button"].i),
         ]
 
-        debounce_counter = Signal(7)
+        debounce_counter = Signal(14, name="debounce_counter")
         unclicked = Signal()
         unclicked_delayed = Signal()
         button_prev = Signal().like(button)
@@ -78,7 +78,7 @@ class Fetcher(FU):
         with m.If(button_prev & ~button):
             m.d.falling += debounce_counter.eq(1)
         with m.Elif(~button_prev & ~button & debounce_counter.any()):
-            with m.If(debounce_counter < 100):
+            with m.If(debounce_counter < 10000):
                 m.d.falling += debounce_counter.eq(debounce_counter + 1)
             with m.Else():
                 m.d.falling += [debounce_counter.eq(0), unclicked.eq(1)]
