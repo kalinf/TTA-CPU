@@ -68,7 +68,7 @@ if __name__ == "__main__":
         "-m",
         "--mode",
         default="python2json",
-        choices=["python2json", "json2python", "json2binary", "binary2json", "json_prog2json_data", "data2json"],
+        choices=["python2json", "json2python", "json_prog2json_data", "data2json", "python2data_json"],
         help="Selects operation to perform. Default: %(default)s",
     )
     parser.add_argument(
@@ -119,10 +119,6 @@ if __name__ == "__main__":
         print(f"Program of length {len(program)} has been saved into {json_path}.")
     elif args.mode == "json2python":
         print(json2python(Path(args.source_file).resolve()))
-    elif args.mode == "json2binary":
-        ...
-    elif args.mode == "binary2json":
-        ...
     elif args.mode == "json_prog2json_data":
         prog_json_path = Path(args.source_file)
         data_json_path = Path(args.target_file)
@@ -145,3 +141,22 @@ if __name__ == "__main__":
         with json_path.open("w") as f:
             json.dump(data, f, indent=4)
         print(f"Data of length {len(data)} has been saved into {json_path}.")
+    elif args.mode == "python2data_json":
+        configuration_path = Path(args.config_directory) / "config_detail.json"
+        core_model = build_addresses_core_model(configuration_path)
+        func = import_function_from_file(args.source_file, args.function_name)
+        program = resolve_bb_labels(func(core_model), offset=int(args.offset))
+
+        with configuration_path.open() as f:
+            configuration = json.load(f)
+        data = prog2data(
+            program=program,
+            src_width=configuration["src_addr_width"],
+            dest_width=configuration["dest_addr_width"],
+            data_width=configuration["word_size"],
+            start_length=args.start_length,
+        )
+        json_path = Path(args.target_file)
+        with json_path.open("w") as f:
+            json.dump(data, f, indent=4)
+        print(f"Program of length {len(program)} has been saved into {json_path}.")
