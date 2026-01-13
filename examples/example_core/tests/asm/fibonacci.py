@@ -248,5 +248,6 @@ def fibonacci_loop_direct(core, n: int):
 def fibonacci_loop_indirect(core, n: int):
     return fibonacci_loop(core, n, loop_indirect(core), indirect_extra_preparation(core))
 
+
 def fibonacci_loop_indirect5(core):
     return fibonacci_loop(core, 5, loop_indirect(core), indirect_extra_preparation(core))

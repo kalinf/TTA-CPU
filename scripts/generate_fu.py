@@ -280,5 +280,6 @@ def main():
     with config_detail_path.open(mode="w", encoding="utf-8") as f:
         json.dump(configuration, f, ensure_ascii=False)
 
+
 if __name__ == "__main__":
     main()
