@@ -36,12 +36,18 @@ Phase between `rising`/`falling` clock and `mem` clock is shown at the figure be
 
 ![clocks](utils/img/clocks.png)
 
-To read instruction memory, the unit called `Fetcher` has to be defined. It can operate on memory using ports `instr_read_ports[0:instruction_memory_read_ports-1]` already defined in the generated file (`instruction_memory_read_ports` is defined in config file by user).
+To read instruction memory, the unit called `Fetcher` has to be defined. It can operate on memory using ports `instr_read_ports[0:instruction_memory_read_ports-1]` already defined in the generated file (`instruction_memory_read_ports` is defined in configuration file by user).
 To access data memory, the unit called `DataMemory` has to be defined. It can operate on memory using ports: `data_read_port` and `data_write_port` already defined in the generated file.
+To modify instruction memory, the unit called `ProgMemory` has to be defined. It can operate on memory using `instr_write_port` already defined in the generated file.
 
 To insert firmware into core it first must be translated to json format. Translation can be achieved using `translator.py` script.
 Example usage:
 `PYTHONPATH=. python3 scripts/translator.py -m "python2json" -d "examples/example_core/" --source-file "examples/example_core/tests/asm/handlers.py"  --target-file="examples/example_core/programs/wandering_led_program.json" -f "wandering_led"`
 Program in json format can be passed as an argument to the script `synthesize.py`.
 Example usage:
-`PYTHONPATH=. python3 scripts/synthesize.py --config-directory="examples/example_core/" -v --init-instr-memory="examples/example_core/program.json" -f`
+`PYTHONPATH=. python3 scripts/synthesize.py --config-directory="examples/example_core/" -v --init-instr-memory="examples/example_core/bootloader/bootloaderUART.json" --init-data-memory="examples/example_core/bootloader/bootloader_data.json" -f`
+
+To send a program to `example_core` running bootloader script `sendUART.py` can be used. Program to upload should be previously translated into data (losing structure constant, src_addr, dst_addr) **with a proper offset** not less than 140. It can be done in single step by running `translator.py` with mode `python2data_json`.
+Example usage:
+`PYTHONPATH=. python3 scripts/translator.py -m "python2data_json" --source-file "examples/example_core/tests/asm/handlers.py"  --target-file="examples/example_core/programs/wandering_led_translated_program.json" -f "wandering_led" -o 150`
+`PYTHONPATH=. python3 scripts/sendUART.py -m "program" -s "examples/example_core/programs/wandering_led_translated_program.json" -l --offset 150 --baud-rate 115200`
