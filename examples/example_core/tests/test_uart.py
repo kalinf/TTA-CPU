@@ -24,10 +24,10 @@ def char_bit_to_number(character):
     return 0 if character == "0" else 1
 
 
-async def uart_transmit(ctx, data, period, baud_rate, core):
+async def uart_transmit(ctx, data, clk_period, baud_rate, core):
     bin_data = to_binary(data, 8)
     bit_period = 1 / baud_rate
-    cycles_per_bit = int(bit_period / period)
+    cycles_per_bit = int(bit_period / clk_period)
 
     ctx.set(core.resources["uart_rx"].i, 0)
     for i in range(8):
@@ -38,6 +38,23 @@ async def uart_transmit(ctx, data, period, baud_rate, core):
     await ctx.tick(domain="sync").repeat(cycles_per_bit)
 
 
+async def uart_receive(ctx, data, clk_period, baud_rate, core):
+    bit_period = 1 / baud_rate
+    cycles_per_bit = int(bit_period / clk_period)
+    received_data = 0
+
+    while ctx.get(core.resources["uart_tx"].o) != 0:
+        await ctx.tick(domain="sync")
+    await ctx.tick(domain="sync").repeat(cycles_per_bit // 2)
+    for i in range(8):
+        await ctx.tick(domain="sync").repeat(cycles_per_bit)
+        received_bit = ctx.get(core.resources["uart_tx"].o)
+        received_data += received_bit << i
+    await ctx.tick(domain="sync").repeat(cycles_per_bit)
+    assert ctx.get(core.resources["uart_tx"].o) == 1, "Incorrect stop bit"
+    assert received_data == data
+
+
 def test_uart_echo(core_address_model, dir_path, vcd_file, mock_resources):
     init = uart_echo(core_address_model)
     resolved_init = resolve_bb_labels(init)
@@ -46,12 +63,13 @@ def test_uart_echo(core_address_model, dir_path, vcd_file, mock_resources):
     sim.add_clock(4e-8, domain="mem")
     sim.add_clock(4e-8, domain="sync")
 
+    data = 71
+
     async def tb(ctx):
         ctx.set(core.resources["uart_rx"].i, 1)
         await ctx.tick(domain="falling").repeat(100)
-        await uart_transmit(ctx, 71, 4e-8, 115200, core)
-        await ctx.tick(domain="falling").repeat(1000)
-        # TODO: actually check the correctness of transmitted data
+        await uart_transmit(ctx, data, 4e-8, 115200, core)
+        await uart_receive(ctx, data, 4e-8, 115200, core)
 
     sim.add_testbench(tb)
     if vcd_file is not None:

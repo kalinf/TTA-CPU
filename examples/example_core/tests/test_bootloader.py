@@ -5,7 +5,7 @@ from amaranth.sim import Simulator
 from utils.utils import resolve_bb_labels
 from examples.example_core.tests.asm.bootloaderUART import bootloaderUART
 from examples.example_core.tests.asm.uart import uart_echo
-from examples.example_core.tests.test_uart import uart_transmit, to_binary
+from examples.example_core.tests.test_uart import uart_transmit, uart_receive
 from examples.example_core.tests.data.bootloader_data import bootloader_data
 from core.generate_core import gen_core
 from scripts.translator import prog2data
@@ -39,6 +39,7 @@ def test_bootloaderUART(core_address_model, dir_path, vcd_file, mock_resources):
         configuration = json.load(f)
     bootloader_init = bootloaderUART(core_address_model)
     resolved_bootloader_init = resolve_bb_labels(bootloader_init)
+    # uart_echo program will be send via UART
     program_init = uart_echo(core_address_model)
     resolved_program_init = resolve_bb_labels(program_init, offset=150)
     main_program = prog2data(
@@ -58,9 +59,13 @@ def test_bootloaderUART(core_address_model, dir_path, vcd_file, mock_resources):
     sim.add_clock(4e-8, domain="mem")
     sim.add_clock(4e-8, domain="sync")
 
+    data = 42
+
     async def tb(ctx):
+        # set tx (from this perspective) IDLE (high)
         ctx.set(core.resources["uart_rx"].i, 1)
         await ctx.tick(domain="falling").repeat(100)
+        # send bootloader frame
         await transmit_word(ctx, START_SYMBOL, 4e-8, BAUD_RATE, core)
         await transmit_word(ctx, len(main_program), 4e-8, BAUD_RATE, core)
         await transmit_word(ctx, OFFSET, 4e-8, BAUD_RATE, core)
@@ -70,9 +75,8 @@ def test_bootloaderUART(core_address_model, dir_path, vcd_file, mock_resources):
             await transmit_word(ctx, d["data"], 4e-8, BAUD_RATE, core)
         await transmit_word(ctx, STOP_SYMBOL, 4e-8, BAUD_RATE, core)
         await ctx.tick(domain="falling").repeat(100)
-        await transmit_word(ctx, 42, 4e-8, BAUD_RATE, core)
-        await ctx.tick(domain="falling").repeat(700)
-        # TODO: actually check the correctness of transmitted data
+        await uart_transmit(ctx, data, 4e-8, BAUD_RATE, core)
+        await uart_receive(ctx, data, 4e-8, 115200, core)
 
     sim.add_testbench(tb)
     if vcd_file is not None:
