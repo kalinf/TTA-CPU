@@ -42,7 +42,7 @@ def test_wandering_led_asm(core_address_model, dir_path, vcd_file, mock_resource
             ctx.set(core.resources["button"].i, 1)
             await ctx.tick(domain="falling").repeat(10)
             ctx.set(core.resources["button"].i, 0)
-            await ctx.tick(domain="falling").repeat(150)
+            await ctx.tick(domain="falling").repeat(10050)
 
     sim.add_testbench(tb)
     if vcd_file is not None:
