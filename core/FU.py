@@ -47,14 +47,10 @@ class FU(Elaboratable):
 
         for i in range(self.input_count):
             with m.If(self.instr_bus.data.dst_addr == self.inputs[i]["addr"]):
-                m.d.falling += self.inputs[i]["data"].eq(
-                    Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
-                )
+                m.d.falling += self.inputs[i]["data"].eq(self.data_bus.data.data)
 
         for i in range(self.inout_count):
             with m.If(self.instr_bus.data.dst_addr == self.inouts[i]["addr"]):
-                m.d.falling += self.inouts[i]["data"].eq(
-                    Mux(~self.instr_bus.data.constant, self.data_bus.data.data, self.instr_bus.data.src_addr)
-                )
+                m.d.falling += self.inouts[i]["data"].eq(self.data_bus.data.data)
 
         return m

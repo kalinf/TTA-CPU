@@ -118,6 +118,7 @@ class TTA_Core(Elaboratable):
 
             setattr(self, fu[0], m.submodules[fu[0]])
 
+        # data bus controller
         with m.If(~self.instr_bus.data.constant):
             with m.Switch(self.instr_bus.data.src_addr):
                 for fu in self.FUs:
