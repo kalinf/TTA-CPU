@@ -1,8 +1,8 @@
 from amaranth import *
-
 from core.FU import FU
 from core.bus import Bus
 from core.registry import register_fu
+from amaranth.utils import ceil_log2
 
 
 class Logical(FU):
@@ -15,7 +15,7 @@ class Logical(FU):
         - 0: base value
         - 1: compared value
         - 2: mask for single-bit results output
-    5 Outputs:
+    7 Outputs:
         - 0: base AND compared
         - 1: base OR compared
         - 2: base XOR compared
@@ -27,7 +27,11 @@ class Logical(FU):
             - bit 3: reduction AND on compared
             - bit 4: reduction OR on compared
             - bit 5: reduction XOR on compared
+            - bit 6: reduction OR on (base NAND compared)
+            - bit 7: reduction NOR on compared
         - 5: masked output 4
+        - 6: compared >> base
+        - 7: compared << base
     0 Inouts:
     """
 
@@ -56,6 +60,8 @@ class Logical(FU):
     def elaborate(self, platform):
         m = super().elaborate(platform)
 
+        # here you can react on writes into trigger addresses
+        # here place your code, for example:
         base = Signal.like(self.data_bus.data.data, name="base")
         compared = Signal.like(self.data_bus.data.data, name="compared")
         mask = Signal.like(self.data_bus.data.data, name="mask")
@@ -81,11 +87,14 @@ class Logical(FU):
                     compared.all(),
                     compared.any(),
                     compared.xor(),
+                    ~((compared & base).any()),  # bardzo sus rozszerzalne bitowo
+                    ~(compared.any()),
                 )
             ),
+            self.outputs[5]["data"].eq(self.outputs[4]["data"] & mask),
+            self.outputs[6]["data"].eq(compared >> base),
+            self.outputs[7]["data"].eq(compared << (base[: ceil_log2(len(compared))])),
         ]
-
-        m.d.comb += self.outputs[5]["data"].eq(self.outputs[4]["data"] & mask)
 
         return m
 

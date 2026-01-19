@@ -24,7 +24,7 @@
     {
       "name": "Logical",
       "inputs": 3,
-      "outputs": 6,
+      "outputs": 8,
       "inouts": 0,
       "description": "Logical operations."
     },
