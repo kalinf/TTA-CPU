@@ -1,5 +1,4 @@
-# TTA-CPU
-### Transport Triggered Architecture Cores Generator
+# Transport Triggered Architecture Cores Generator
 
 TTA is a One-Instruction Set Computer (OISC) architecture, where `MOVE` is the only available processor instruction, and all operations occur as a side effect of data transport. 
 
