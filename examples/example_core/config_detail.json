@@ -158,7 +158,7 @@
         },
         {
             "name": "UART",
-            "inputs": 1,
+            "inputs": 4,
             "outputs": 3,
             "inouts": 0,
             "description": "UART Transmitter Receiver.",
@@ -183,7 +183,7 @@
             "inouts": 2,
             "description": "General purpose registers.",
             "input_address": [
-                33
+                36
             ],
             "output_address": [
                 31
@@ -199,7 +199,7 @@
             "inouts": 1,
             "description": "Function result register.",
             "input_address": [
-                33
+                36
             ],
             "output_address": [
                 31
@@ -219,7 +219,7 @@
                 "leds"
             ],
             "input_address": [
-                33
+                36
             ],
             "output_address": [
                 31

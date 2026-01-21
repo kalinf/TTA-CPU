@@ -76,7 +76,7 @@
         },
         {
             "name": "UART",
-            "inputs": 1,
+            "inputs": 4,
             "outputs": 3,
             "inouts": 0,
             "description": "UART Transmitter Receiver.",

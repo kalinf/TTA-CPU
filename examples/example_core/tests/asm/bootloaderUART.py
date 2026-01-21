@@ -1,3 +1,5 @@
+from examples.example_core.tests.asm.uart import uart_init
+
 def turn_jumping_off_instr(core):
     return {"constant": 1, "src_addr": 0, "dst_addr": core.Fetcher.inputs[0]}
 
@@ -482,7 +484,8 @@ def receive_frame(core):
 
 
 def bootloaderUART(core):
-    init = receive_frame(core)
+    init = uart_init(core)
+    init += receive_frame(core)
     init += receive_byte_func(core)
     init += receive_word_func(core)
     return init

@@ -38,6 +38,7 @@ def test_bootloader_data_memory(core_address_model, dir_path, vcd_file, mock_res
     data = 97  # 'a'
 
     async def tb(ctx):
+        ctx.set(core.resources["uart_rx"].i, 1)
         await ctx.tick(domain="falling").repeat(100)
         # program waits for trigger to start transmitting
         await uart_transmit(ctx, data, 4e-8, 115200, core)

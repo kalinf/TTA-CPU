@@ -1,3 +1,30 @@
+def uart_init(core):
+    return [
+        (
+            "uart_init",
+            [
+                # baud rate 115200
+                {
+                    "constant": 1,
+                    "src_addr": 17,
+                    "dst_addr": core.UART.inputs[1],
+                },
+                # 8 data bits
+                {
+                    "constant": 1,
+                    "src_addr": 8,
+                    "dst_addr": core.UART.inputs[2],
+                },
+                # 1 stop bit
+                {
+                    "constant": 1,
+                    "src_addr": 1,
+                    "dst_addr": core.UART.inputs[3],
+                },
+            ]
+        )
+    ]
+
 def uart_echo(core):
     # first instruction is infinite loop when jump condition is true
     init = [
@@ -7,6 +34,7 @@ def uart_echo(core):
         )
     ]
     init += [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
+    init += uart_init(core)
     init += [
         (
             "prep_receive",

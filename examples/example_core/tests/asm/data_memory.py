@@ -1,3 +1,5 @@
+from examples.example_core.tests.asm.uart import uart_init
+
 def data_memory(core):
     init = [
         (
@@ -7,6 +9,7 @@ def data_memory(core):
     ]
     # first instruction is infinite loop when jump condition is true
     init += [("end", [{"constant": 0, "src_addr": 0, "dst_addr": 0}])]
+    init += uart_init(core)
     init += [
         (
             "setup",
