@@ -1,0 +1,26 @@
+init:
+    Logical.inputs[0]   <- C 10
+    Logical.inputs[2]   <- C b101
+    Adder.inputs[0]     <- C 0
+    Adder.inputs[1]     <- C 1
+    Increaser.inouts[0] <- C 2
+    Increaser.inouts[1] <- C 1
+    // inicjalizacja loopera na adresy wejsc Addera
+    Looper.inputs[0]    <- C Adder.inputs[0]
+    Looper.inputs[1]    <- C Adder.inputs[1]
+    Looper.inputs[2]    <- C 1
+loop:
+    // wylaczamy skok
+    Fetcher.inputs[0]   <- C 0
+    Logical.inputs[0]   <- Increaser.inouts[0]
+    Fetcher.inputs[1]   <- C "end"
+    Fetcher.inputs[0]   <- Logical.outputs[5]
+    // ustawiamy posredni adres na wlasciwe wejscie
+    Fetcher.inputs[3]   <- Looper.outputs[0]
+    // przekierowujemy wyjscie Addera na adres posredni
+    Fetcher.inouts[2]     <- Adder.outputs[0]
+    // powtarzamy loop
+    Fetcher.inputs[1]   <- C "loop"
+    Fetcher.inputs[0]   <- C 1
+end:
+    Result.inouts[0]    <- Adder.outputs[0]

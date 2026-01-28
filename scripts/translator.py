@@ -4,6 +4,7 @@ import argparse
 import importlib.util
 from pathlib import Path
 from utils.utils import build_addresses_core_model, resolve_bb_labels
+from scripts.parser import compile_file
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CORE_PATH = (SCRIPT_DIR / ".." / "examples" / "example_core").resolve()
@@ -68,7 +69,7 @@ if __name__ == "__main__":
         "-m",
         "--mode",
         default="python2json",
-        choices=["python2json", "json2python", "json_prog2json_data", "data2json", "python2data_json"],
+        choices=["python2json", "json2python", "json_prog2json_data", "data2json", "python2data_json", "tta2json"],
         help="Selects operation to perform. Default: %(default)s",
     )
     parser.add_argument(
@@ -113,6 +114,14 @@ if __name__ == "__main__":
         core_model = build_addresses_core_model(Path(args.config_directory) / "config_detail.json")
         func = import_function_from_file(args.source_file, args.function_name)
         program = resolve_bb_labels(func(core_model), offset=int(args.offset))
+        json_path = Path(args.target_file)
+        with json_path.open("w") as f:
+            json.dump(program, f, indent=4)
+        print(f"Program of length {len(program)} has been saved into {json_path}.")
+    if args.mode == "tta2json":
+        core_model = build_addresses_core_model(Path(args.config_directory) / "config_detail.json")
+        program_unresolved = compile_file(Path(args.source_file), core_model)
+        program = resolve_bb_labels(program_unresolved, offset=int(args.offset))
         json_path = Path(args.target_file)
         with json_path.open("w") as f:
             json.dump(program, f, indent=4)
