@@ -278,7 +278,7 @@ def main():
 
     config_detail_path = target_dir / "config_detail.json"
     with config_detail_path.open(mode="w", encoding="utf-8") as f:
-        json.dump(configuration, f, ensure_ascii=False)
+        json.dump(configuration, f, indent=4, ensure_ascii=False)
 
 
 if __name__ == "__main__":
